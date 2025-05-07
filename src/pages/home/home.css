@@ -69,7 +69,7 @@ nav h2 {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  margin-top: 0; /* Remove any extra margin from top */
+  margin-top: 0;
   padding-top: 20px; 
 }
 

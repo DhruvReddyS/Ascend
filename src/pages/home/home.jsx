@@ -1,4 +1,6 @@
 import "./home.css";
+import { Link } from 'react-router-dom';
+
 import heroImage from "../../assets/images/section1.png";
 import course1 from "../../assets/images/course1.png";
 import course2 from "../../assets/images/course2.png";
@@ -18,27 +20,8 @@ import student7 from "../../assets/images/student7.jpg";
 import student8 from "../../assets/images/student8.jpg";
 
 const Home = () => {
-  const courseImages = [
-    course1,
-    course2,
-    course3,
-    course4,
-    course5,
-    course6,
-    course7,
-    course8,
-  ];
-
-  const studentImages = [
-    student1,
-    student2,
-    student3,
-    student4,
-    student5,
-    student6,
-    student7,
-    student8
-  ];
+  const courseImages = [course1, course2, course3, course4, course5, course6, course7, course8];
+  const studentImages = [student1, student2, student3, student4, student5, student6, student7, student8];
 
   return (
     <>
@@ -48,10 +31,10 @@ const Home = () => {
           <h2 className="ms-2">Ascend</h2>
         </div>
         <div className="d-flex align-items-center nav-links">
-          <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/courses">Courses</a>
-          <a href="/login" className="btn btn-light ms-3">Get Started</a>
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+          <Link to="/courses">Courses</Link>
+          <Link to="/login" className="btn btn-light ms-3">Get Started</Link>
         </div>
       </nav>
 
@@ -62,8 +45,8 @@ const Home = () => {
           <h2>Your Next Skill Awaits.</h2>
           <p>Unlock your potential. Build skills that shape your future. Start your journey today.</p>
           <div className="hero-buttons">
-            <a href="/signup" className="btn-primary">Start Learning</a>
-            <a href="/dashboard" className="btn-outline-primary">Browse Paths</a>
+            <Link to="/signup" className="btn-primary">Start Learning</Link>
+            <Link to="/dashboard" className="btn-outline-primary">Browse Paths</Link>
           </div>
         </div>
         <div className="hero-image">
@@ -80,32 +63,14 @@ const Home = () => {
           {courseImages.map((img, i) => (
             <div className="course-item m-3" key={i}>
               <img src={img} alt={`Course ${i + 1}`} className="course-img" />
-              <h4>{[
-                "Web Development",
-                "Data Science",
-                "Digital Marketing",
-                "Machine Learning",
-                "Cyber Security",
-                "DevOps",
-                "Cloud Computing",
-                "UI/UX Design"
-              ][i]}</h4>
-              <p>{[
-                "Master the art of creating websites and applications using modern technologies.",
-                "Unlock the secrets of data analysis, machine learning, and AI in real-world applications.",
-                "Master SEO, content strategy, and paid campaigns to grow businesses online.",
-                "Dive into machine learning algorithms, deep learning, and AI models for real-world applications.",
-                "Learn the best practices for securing systems, networks, and data against cyber threats.",
-                "Understand the principles of DevOps and how to implement automation in the development process.",
-                "Master AWS, Azure, and Google Cloud services to become a certified cloud architect or engineer.",
-                "Design user-friendly interfaces, craft smooth user journeys, and master design tools like Figma & Adobe XD."
-              ][i]}</p>
+              <h4>{["Web Development","Data Science","Digital Marketing","Machine Learning","Cyber Security","DevOps","Cloud Computing","UI/UX Design"][i]}</h4>
+              <p>{["Master the art of creating websites and applications using modern technologies.","Unlock the secrets of data analysis, machine learning, and AI in real-world applications.","Master SEO, content strategy, and paid campaigns to grow businesses online.","Dive into machine learning algorithms, deep learning, and AI models for real-world applications.","Learn the best practices for securing systems, networks, and data against cyber threats.","Understand the principles of DevOps and how to implement automation in the development process.","Master AWS, Azure, and Google Cloud services to become a certified cloud architect or engineer.","Design user-friendly interfaces, craft smooth user journeys, and master design tools like Figma & Adobe XD."][i]}</p>
             </div>
           ))}
         </div>
 
         <div className="view-more-btn-container text-center mt-4">
-          <a href="/courses" className="btn-outline-primary">View More Courses</a>
+          <Link to="/courses" className="btn-outline-primary">View More Courses</Link>
         </div>
       </section>
 
@@ -117,20 +82,8 @@ const Home = () => {
             <div className={`roadmap-item ${i % 2 === 0 ? 'left' : 'right'}`} key={i}>
               <div className="roadmap-circle pulse">{i + 1}</div>
               <div className="roadmap-card">
-                <h5>{[
-                  "Sign Up and Create Your Profile",
-                  "Select Your Learning Path",
-                  "Engage with Real-World Projects",
-                  "Track Your Progress Live",
-                  "Get Certified and Showcase Skills"
-                ][i]}</h5>
-                <p>{[
-                  "Launch your journey by setting up a learner or instructor profile tailored to your goals.",
-                  "Choose from career tracks like Full Stack Dev, Data Science, Machine Learning, or Design!",
-                  "Learn by doing: real assignments, challenges, capstone projects, and hands-on case studies.",
-                  "Use personalized dashboards and analytics to track mastery, completion, and growth rates.",
-                  "Earn industry-recognized certificates and badges to boost your career and credibility!"
-                ][i]}</p>
+                <h5>{["Sign Up and Create Your Profile","Select Your Learning Path","Engage with Real-World Projects","Track Your Progress Live","Get Certified and Showcase Skills"][i]}</h5>
+                <p>{["Launch your journey by setting up a learner or instructor profile tailored to your goals.","Choose from career tracks like Full Stack Dev, Data Science, Machine Learning, or Design!","Learn by doing: real assignments, challenges, capstone projects, and hands-on case studies.","Use personalized dashboards and analytics to track mastery, completion, and growth rates.","Earn industry-recognized certificates and badges to boost your career and credibility!"][i]}</p>
               </div>
             </div>
           ))}
@@ -144,18 +97,8 @@ const Home = () => {
           {["🚀", "🛠️", "📈", "🎯"].map((icon, i) => (
             <div className="feature-item" key={i}>
               <div className="feature-icon">{icon}</div>
-              <h4>{[
-                "Personalized Learning",
-                "Hands-on Projects",
-                "Progress Tracking",
-                "Expert Mentors"
-              ][i]}</h4>
-              <p>{[
-                "Tailored pathways designed to fit your goals, pace, and style of learning.",
-                "Learn by doing — work on real-world projects to build practical skills.",
-                "See your improvements in real-time, and stay motivated on your journey.",
-                "Guidance and feedback from industry professionals to sharpen your skills."
-              ][i]}</p>
+              <h4>{["Personalized Learning","Hands-on Projects","Progress Tracking","Expert Mentors"][i]}</h4>
+              <p>{["Tailored pathways designed to fit your goals, pace, and style of learning.","Learn by doing — work on real-world projects to build practical skills.","See your improvements in real-time, and stay motivated on your journey.","Guidance and feedback from industry professionals to sharpen your skills."][i]}</p>
             </div>
           ))}
         </div>
@@ -169,35 +112,8 @@ const Home = () => {
             {[...Array(8)].map((_, i) => (
               <div className="opinion-card" key={i}>
                 <img src={studentImages[i]} alt={`@student${i + 1}`} className="student-photo" />
-                <p className="student-opinion">{[
-                  "🚀 Ascend revolutionized how I learn. Real-time progress kept me motivated! 📈",
-                  "💻 Learned Web Development with real projects. Ascend made coding fun! 📊",
-                  "🎥 Loved learning Full Stack through videos and interactive quizzes. 📱",
-                  "🔒 Cybersecurity journey made easy with dashboards and flexible learning! 🏅",
-                  "🤖 Ascend unlocked AI and ML for me. Brilliant content! 📚",
-                  "📈 Digital Marketing paths plus case studies made theory practical. 🖥️",
-                  "🎨 UX/UI modules helped me track design skills perfectly. 🖌️",
-                  "⚙️ DevOps made simple with structured modules. 🚀"
-                ][i]}</p>
-                <h5><span className="username">{[
-                  "@SarahL",
-                  "@JohnD",
-                  "@EmilyR",
-                  "@MarkT",
-                  "@OliviaW",
-                  "@JamesM",
-                  "@RachelP",
-                  "@LiamB"
-                ][i]}</span><br />{[
-                  "Data Science Student",
-                  "Web Development Student",
-                  "Full Stack Development Student",
-                  "Cybersecurity Student",
-                  "AI & ML Student",
-                  "Digital Marketing Student",
-                  "UX/UI Design Student",
-                  "DevOps Student"
-                ][i]}</h5>
+                <p className="student-opinion">{["🚀 Ascend revolutionized how I learn. Real-time progress kept me motivated! 📈","💻 Learned Web Development with real projects. Ascend made coding fun! 📊","🎥 Loved learning Full Stack through videos and interactive quizzes. 📱","🔒 Cybersecurity journey made easy with dashboards and flexible learning! 🏅","🤖 Ascend unlocked AI and ML for me. Brilliant content! 📚","📈 Digital Marketing paths plus case studies made theory practical. 🖥️","🎨 UX/UI modules helped me track design skills perfectly. 🖌️","⚙️ DevOps made simple with structured modules. 🚀"][i]}</p>
+                <h5><span className="username">{["@SarahL","@JohnD","@EmilyR","@MarkT","@OliviaW","@JamesM","@RachelP","@LiamB"][i]}</span><br />{["Data Science Student","Web Development Student","Full Stack Development Student","Cybersecurity Student","AI & ML Student","Digital Marketing Student","UX/UI Design Student","DevOps Student"][i]}</h5>
               </div>
             ))}
           </div>
@@ -209,7 +125,7 @@ const Home = () => {
         <div className="contact-container">
           <div className="contact-text">
             <h2>Let's Build Your Next Skill Together</h2>
-            <p>Have a question, need support, or just want to say hello?  We're here to support your learning journey every step of the way. 📚</p>
+            <p>Have a question, need support, or just want to say hello? We're here to support your learning journey every step of the way. 📚</p>
           </div>
 
           <form className="contact-form">
@@ -229,10 +145,10 @@ const Home = () => {
             <p>Unlock your full potential with real-world learning, one step at a time.</p>
           </div>
           <div className="footer-links">
-            <a href="#">Home</a>
-            <a href="#">Programs</a>
-            <a href="#">About Us</a>
-            <a href="#">Contact</a>
+            <Link to="/">Home</Link>
+            <Link to="/programs">Programs</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/contact">Contact</Link>
           </div>
         </div>
         <div className="footer-bottom">
