@@ -1,0 +1,66 @@
+.student-dashboard {
+    display: flex;
+    height: 100vh;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #2563eb;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 10;
+  }
+  
+  .sidebar {
+    width: 220px;
+    background: #f1f5f9;
+    padding-top: 80px;
+    border-right: 1px solid #ddd;
+  }
+  
+  .sidebar h3 {
+    margin-left: 20px;
+    color: #3b82f6;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+  }
+  
+  .sidebar li {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #333;
+    transition: background 0.3s;
+  }
+  
+  .sidebar li:hover {
+    background-color: #e0f2fe;
+  }
+  
+  .main-content {
+    flex: 1;
+    margin-left: 220px;
+    margin-top: 80px;
+    padding: 30px;
+    background-color: #f9fafb;
+    overflow-y: auto;
+  }
+  
+  .main-content section {
+    background: #fff;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+  }
+  

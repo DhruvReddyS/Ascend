@@ -1,4 +1,3 @@
-/* Global Styles */
 * {
   margin: 0;
   padding: 0;
@@ -6,6 +5,8 @@
   scroll-behavior: smooth;
 }
 
+
+/* ========== Global Styles ========== */
 body {
   font-family: 'Poppins', 'Segoe UI', sans-serif;
   background: linear-gradient(180deg, #f9fafb, #e0e7ff);
@@ -14,51 +15,8 @@ body {
   overflow-x: hidden;
 }
 
-/* Navbar Section */
-nav {
-  background: #ffffff;
-  padding: 12px 30px; /* Keep this from previous change for a thinner navbar */
-  border-radius: 15px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 1000;
-  margin-bottom: 0;
-}
 
-nav h2 {
-  color: #3b82f6;
-  font-weight: 800;
-  font-size: 2rem; /* Reduced font size */
-  margin-left: 12px;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #3b82f6;
-  font-weight: 700;
-  margin-left: 15px; /* Reduced spacing between links */
-  padding: 8px 18px; /* Reduced padding for thinner buttons */
-  border-radius: 10px; /* Slightly reduced border radius */
-  transition: all 0.3s ease;
-  font-size: 1rem; /* Reduced font size */
-}
-
-.nav-links a:hover {
-  background-color: #3b82f6;
-  color: #ffffff;
-  box-shadow: 0 6px 18px rgba(59, 130, 246, 0.4);
-  transform: translateY(-2px);
-}
-
-
-/* Hero Section */
+/* ========== Hero Section ========== */
 .hero {
   display: flex;
   align-items: center;
@@ -70,9 +28,11 @@ nav h2 {
   max-width: 1400px;
   margin: 0 auto;
   margin-top: 0;
-  padding-top: 20px; 
+  padding-top: 20px;
 }
 
+
+/* ========== Hero Card ========== */
 .hero-card, .hero-image {
   flex: 1;
   max-width: 650px;
@@ -94,6 +54,8 @@ nav h2 {
   transform: translateY(-10px);
 }
 
+
+/* ========== Hero Image ========== */
 .hero-image img {
   width: 100%;
   height: 100%;
@@ -101,7 +63,8 @@ nav h2 {
   animation: float 6s infinite ease-in-out;
 }
 
-/* Text Styling */
+
+/* ========== Hero Text Styling ========== */
 .text-card {
   text-align: left;
 }
@@ -130,13 +93,16 @@ nav h2 {
   max-width: 500px;
 }
 
-/* Buttons Styling */
+
+/* ========== Hero Buttons ========== */
 .hero-buttons {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
 }
 
+
+/* ========== Primary Button ========== */
 .btn-primary, .btn-outline-primary {
   padding: 14px 40px;
   font-size: 1.2rem;
@@ -162,6 +128,8 @@ nav h2 {
   box-shadow: 0 12px 24px rgba(29, 78, 216, 0.4);
 }
 
+
+/* ========== Outline Button ========== */
 .btn-outline-primary {
   border: 2px solid #3b82f6;
   color: #3b82f6;
@@ -175,46 +143,14 @@ nav h2 {
   box-shadow: 0 12px 24px rgba(59, 130, 246, 0.4);
 }
 
-/* Animation */
+
+/* ========== Animations ========== */
 @keyframes float {
   0% { transform: translateY(0); }
   50% { transform: translateY(-15px); }
   100% { transform: translateY(0); }
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-  .hero {
-    flex-direction: column;
-    padding: 4rem 1rem;
-    gap: 2rem;
-  }
-
-  .hero-card, .hero-image {
-    max-width: 100%;
-  }
-
-  .hero-card {
-    padding: 2rem;
-  }
-
-  .text-card h1 {
-    font-size: 2.8rem;
-  }
-
-  .text-card h2 {
-    font-size: 2.2rem;
-  }
-
-  .text-card p {
-    font-size: 1.2rem;
-  }
-
-  .hero-buttons {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
 
 /* Courses Section Styling */
 .courses-section {
@@ -245,36 +181,42 @@ animation: fadeIn 1s forwards 0.5s;
 
 /* Courses Grid */
 .courses-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-gap: 2.5rem;
-justify-content: center;
-margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Always 4 columns */
+  gap: 2rem;
+  margin: 0 auto;
+  max-width: 1400px;
+  padding: 0 2rem;
 }
+
+
 
 /* Individual Course Card */
 .course-item {
-background: rgba(255, 255, 255, 0.6);
-backdrop-filter: blur(15px);
-border-radius: 20px;
-box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-overflow: hidden;
-padding: 1.5rem;
-text-align: center;
-transition: transform 0.4s ease, box-shadow 0.4s ease;
-opacity: 0;
-transform: translateY(30px);
-animation: slideUp 1s forwards;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  height: 100%; /* full height */
+  min-height: 460px; /* control vertical sizing */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
+
 .course-item img {
-width: 100%;
-height: 220px;
-object-fit: cover;
-border-radius: 15px;
-margin-bottom: 1.5rem;
-transition: transform 0.4s ease;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 1rem;
 }
+
 
 /* Zoom on Image Hover */
 .course-item:hover img {
@@ -356,281 +298,274 @@ margin-bottom: 0;
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-.courses-grid {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-}
+@media (max-width: 1024px) {
+  .courses-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 per row on tablets */
+  }
 }
 
-@media (max-width: 480px) {
-.courses-grid {
-  grid-template-columns: 1fr;
-}
+@media (max-width: 600px) {
+  .courses-grid {
+    grid-template-columns: 1fr; /* 1 per row on phones */
+  }
 }
 
 
 /* Roadmap Section */
 .ascend-roadmap {
-background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-padding: 6rem 2rem;
-position: relative;
-}
-
-.section-title {
-font-size: 2.8rem;
-font-weight: 800;
-color: #1E3A8A;
-margin-bottom: 4rem;
-}
-
-/* Main Timeline Line */
-.roadmap-wrapper {
-position: relative;
-max-width: 1200px;
-margin: 0 auto;
-}
-
-.roadmap-wrapper::before {
-content: '';
-position: absolute;
-top: 0;
-left: 50%;
-transform: translateX(-50%);
-width: 4px;
-height: 100%;
-background: repeating-linear-gradient(
-  to bottom,
-  #2563EB,
-  #2563EB 10px,
-  transparent 10px,
-  transparent 20px
-);
-z-index: 0;
-}
-
-/* Roadmap Items */
-.roadmap-item {
-position: relative;
-width: 50%;
-padding: 2rem 2rem;
-box-sizing: border-box;
-}
-
-.roadmap-item.left {
-left: 0;
-text-align: right;
-}
-
-.roadmap-item.right {
-left: 50%;
-text-align: left;
-}
-
-/* Roadmap Circle */
-.roadmap-circle {
-width: 70px;
-height: 70px;
-background: linear-gradient(135deg, #3B82F6, #2563EB);
-color: white;
-font-size: 1.6rem;
-font-weight: 700;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-position: absolute;
-top: 0;
-transform: translateY(-50%);
-box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-z-index: 2;
-}
-
-.roadmap-item.left .roadmap-circle {
-right: -35px;
-}
-
-.roadmap-item.right .roadmap-circle {
-left: -35px;
-}
-
-/* Roadmap Cards */
-.roadmap-card {
-background: rgba(255, 255, 255, 0.8);
-backdrop-filter: blur(10px);
-padding: 2rem;
-border-radius: 20px;
-box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-transition: transform 0.4s, box-shadow 0.4s;
-position: relative;
-z-index: 1;
-}
-
-.roadmap-card:hover {
-transform: translateY(-8px);
-box-shadow: 0 12px 30px rgba(59,130,246,0.3);
-}
-
-.roadmap-card h5 {
-font-size: 1.6rem;
-font-weight: 700;
-color: #1E3A8A;
-margin-bottom: 1rem;
-}
-
-.roadmap-card p {
-font-size: 1.1rem;
-color: #475569;
-line-height: 1.7;
-}
-
-/* Glowing Pulse Animation */
-.pulse {
-animation: pulseGlow 2s infinite;
-}
-
-@keyframes pulseGlow {
-0% {
-  box-shadow: 0 0 0 0 rgba(59,130,246, 0.7);
-}
-70% {
-  box-shadow: 0 0 0 15px rgba(59,130,246, 0);
-}
-100% {
-  box-shadow: 0 0 0 0 rgba(59,130,246, 0);
-}
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-.roadmap-wrapper::before {
-  left: 20px;
-}
-
-.roadmap-item {
-  width: 100%;
-  padding-left: 70px;
-  padding-right: 20px;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  padding: 6rem 2rem;
+  position: relative;
+  }
+  
+  .section-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #1E3A8A;
   margin-bottom: 4rem;
-}
-
-.roadmap-item.left,
-.roadmap-item.right {
-  text-align: left;
+  }
+  
+  /* Main Timeline Line */
+  .roadmap-wrapper {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  }
+  
+  .roadmap-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    #2563EB,
+    #2563EB 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  z-index: 0;
+  }
+  
+  /* Roadmap Items */
+  .roadmap-item {
+  position: relative;
+  width: 50%;
+  padding: 2rem 2rem;
+  box-sizing: border-box;
+  }
+  
+  .roadmap-item.left {
   left: 0;
-}
-
-.roadmap-circle {
-  left: 0 !important;
-  transform: translateY(-50%);
-}
-}
-
-
-/* General Styling */
-body {
-  font-family: 'Poppins', sans-serif;
-  color: #333;
-}
-
-/* Section Title Styling */
-.section-title {
-  font-size: 2.5rem;
+  text-align: right;
+  }
+  
+  .roadmap-item.right {
+  left: 50%;
+  text-align: left;
+  }
+  
+  /* Roadmap Circle */
+  .roadmap-circle {
+  width: 70px;
+  height: 70px;
+  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  color: white;
+  font-size: 1.6rem;
   font-weight: 700;
-  color: #1E2A47;
-  margin-bottom: 20px;
-}
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  transform: translateY(-50%);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  z-index: 2;
+  }
+  
+  .roadmap-item.left .roadmap-circle {
+  right: -35px;
+  }
+  
+  .roadmap-item.right .roadmap-circle {
+  left: -35px;
+  }
+  
+  /* Roadmap Cards */
+  .roadmap-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.4s, box-shadow 0.4s;
+  position: relative;
+  z-index: 1;
+  }
+  
+  .roadmap-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(59,130,246,0.3);
+  }
+  
+  .roadmap-card h5 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1E3A8A;
+  margin-bottom: 1rem;
+  }
+  
+  .roadmap-card p {
+  font-size: 1.1rem;
+  color: #475569;
+  line-height: 1.7;
+  }
+  
+  /* Glowing Pulse Animation */
+  .pulse {
+  animation: pulseGlow 2s infinite;
+  }
+  
+  @keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59,130,246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(59,130,246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59,130,246, 0);
+  }
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+  .roadmap-wrapper::before {
+    left: 20px;
+  }
+  
+  .roadmap-item {
+    width: 100%;
+    padding-left: 70px;
+    padding-right: 20px;
+    margin-bottom: 4rem;
+  }
+  
+  .roadmap-item.left,
+  .roadmap-item.right {
+    text-align: left;
+    left: 0;
+  }
+  
+  .roadmap-circle {
+    left: 0 !important;
+    transform: translateY(-50%);
+  }
+  }
 
-/* Features Section Styling */
+/* ===== Features Section ===== */
 .features-section {
-background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-padding: 5rem 2rem;
-text-align: center;
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  padding: 6rem 2rem;
+  text-align: center;
 }
 
-.features-section h2.section-title {
-font-size: 2.8rem;
-font-weight: 700;
-color: #1E3A8A;
-margin-bottom: 3rem;
+.features-section .section-title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #1E3A8A;
+  margin-bottom: 3rem;
 }
 
-/* Feature List Styling */
+/* Grid Layout for Cards */
 .features-list {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-gap: 40px;
-justify-items: center;
-margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 per row */
+  gap: 2rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
+/* Feature Card */
 .feature-item {
-background: #ffffff;
-padding: 3rem 2rem;
-border-radius: 20px;
-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-transition: all 0.4s ease;
-text-align: center;
-position: relative;
-overflow: hidden;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Hover Glow */
+.feature-item:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+}
+
+/* Optional Shimmer Background */
 .feature-item::before {
-content: '';
-position: absolute;
-top: -50%;
-left: -50%;
-width: 200%;
-height: 200%;
-background: rgba(59, 130, 246, 0.1);
-transform: rotate(45deg);
-z-index: 0;
-transition: all 0.4s ease;
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(59, 130, 246, 0.05);
+  transform: rotate(45deg);
+  transition: 0.4s ease;
+  z-index: 0;
 }
 
 .feature-item:hover::before {
-background: rgba(59, 130, 246, 0.2);
+  background: rgba(59, 130, 246, 0.1);
 }
 
-.feature-item:hover {
-transform: translateY(-12px) rotate(-1deg);
-box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
-}
-
+/* Emoji Icon */
 .feature-icon {
-font-size: 4rem;
-color: #2563EB;
-margin-bottom: 20px;
-position: relative;
-z-index: 1;
-transition: transform 0.4s;
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  z-index: 1;
+  position: relative;
 }
 
-.feature-item:hover .feature-icon {
-transform: scale(1.2);
-}
-
+/* Card Title */
 .feature-item h4 {
-font-size: 1.6rem;
-font-weight: 700;
-color: #1E3A8A;
-margin-bottom: 1rem;
-position: relative;
-z-index: 1;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1E3A8A;
+  margin-bottom: 1rem;
+  z-index: 1;
+  position: relative;
 }
 
+/* Card Description */
 .feature-item p {
-font-size: 1.05rem;
-color: #475569;
-line-height: 1.6;
-position: relative;
-z-index: 1;
+  font-size: 1rem;
+  color: #475569;
+  line-height: 1.6;
+  z-index: 1;
+  position: relative;
 }
 
-/* Responsive Tweaks */
-@media (max-width: 768px) {
-.features-list {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+/* === Responsive Grid === */
+@media (max-width: 1024px) {
+  .features-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
+
+@media (max-width: 600px) {
+  .features-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 
@@ -732,17 +667,7 @@ h5 {
   }
 }
 
-/* Basic Reset */
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
-
-body {
-font-family: 'Poppins', sans-serif;
-background: #ffffff;
-}
+/*Student opinion section*/
 
 .student-opinion-section {
 background: #f9fafb;
@@ -786,6 +711,10 @@ flex-direction: column;
 align-items: center;
 justify-content: space-between;
 transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.opinion-card:last-child {
+  margin-right: 0;
 }
 
 .opinion-card:hover {
