@@ -1,0 +1,38 @@
+<a class="course-card" 
+   href="{% if course.status == 'published' %}
+            {{ url_for('view_course', course_id=course._id) }}
+         {% else %}
+            {{ url_for('view_course', course_id=course._id) }}
+         {% endif %}">
+  
+  <!-- Thumbnail Section -->
+  <div class="thumbnail">
+    <img src="{{ course.thumbnail_url or '/static/images/default_thumb.jpg' }}" alt="{{ course.title }}">
+  </div>
+
+  <!-- Course Info -->
+  <div class="card-content">
+    <h4 class="course-title">{{ course.title }}</h4>
+
+    <div class="course-meta">
+      <span><i class="fas fa-globe"></i> {{ course.language }}</span>
+      <span><i class="fas fa-signal"></i> {{ course.difficulty }}</span>
+    </div>
+
+    <div class="course-stats">
+      <span><i class="fas fa-users"></i> {{ course.students or 0 }} Students</span>
+      <span><i class="fas fa-clock"></i> {{ course.duration or 0 }} hrs</span>
+      <span><i class="fas fa-star"></i> {{ course.rating or 0 }}/5</span>
+    </div>
+
+    <div class="course-structure">
+      <span><i class="fas fa-cubes"></i> {{ course.num_modules }} Modules</span>
+      <span><i class="fas fa-book-open"></i> {{ course.num_chapters }} Chapters</span>
+      <span><i class="fas fa-file-alt"></i> {{ course.num_topics }} Topics</span>
+    </div>
+
+    <span class="status-label {{ course.status }}">
+      {{ course.status|capitalize }}
+    </span>
+  </div>
+</a>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Review Course</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='course-player.css') }}">
+</head>
+<body>
+  <div class="review-container">
+    <h2>Review: {{ course.title }}</h2>
+    {% if already_reviewed %}
+      <div class="alert alert-info">
+        You have already submitted a review for this course.
+      </div>
+    {% else %}
+    <form method="POST">
+      <label for="stars">Rating:</label>
+      <select name="stars" id="stars" required>
+        <option value="">Select stars</option>
+        {% for i in range(5, 0, -1) %}
+          <option value="{{ i }}">{{ i }} star{{ 's' if i > 1 }}</option>
+        {% endfor %}
+      </select>
+      <label for="review_text">Your Review:</label>
+      <textarea name="review_text" id="review_text" rows="5" required></textarea>
+      <button type="submit" class="complete-btn"><i class="fas fa-check-circle"></i> Submit Review</button>
+    </form>
+    {% endif %}
+  </div>
+</body>
+</html>

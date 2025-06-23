@@ -3,18 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}Dashboard{% endblock %}</title>
-  
+  <title>{% block title %}Student Dashboard{% endblock %}</title>
 
-  
-{% block head %}{% endblock %}
+  {% block head %}{% endblock %}
 
   <!-- Fonts + Icons + Styles -->
-<link rel="stylesheet" href="{{ url_for('static', filename='instructor_dash.css') }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-
-
+  <link rel="stylesheet" href="/static/student_base.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 </head>
 <body>
   <div class="dashboard-container">
@@ -22,12 +17,12 @@
     <aside class="sidebar" style="position: fixed; height: 100vh; top: 0; left: 0;">
       <div class="brand"><i class="fas fa-rocket"></i> Ascend</div>
       <nav>
-        <a href="/instructor/dashboard" class="{% if page == 'dashboard' %}active{% endif %}"><i class="fas fa-home"></i> Dashboard</a>
-        <a href="/instructor/my-courses" class="{% if page == 'courses' %}active{% endif %}"><i class="fas fa-book"></i> My Courses</a>
-        <a href="/instructor/create-course" class="{% if page == 'create' %}active{% endif %}"><i class="fas fa-plus-circle"></i> Create Course</a>
-        <a href="/instructor/analytics" class="{% if page == 'analytics' %}active{% endif %}"><i class="fas fa-chart-line"></i> Analytics</a>
-        <a href="/instructor/profile" class="{% if page == 'profile' %}active{% endif %}"><i class="fas fa-user"></i> Profile</a>
-        <a href="/instructor/settings" class="{% if page == 'settings' %}active{% endif %}"><i class="fas fa-cog"></i> Settings</a>
+        <a href="/student/dashboard" class="{% if page == 'dashboard' %}active{% endif %}"><i class="fas fa-house"></i> Dashboard</a>
+        <a href="/student/my-courses" class="{% if page == 'my-courses' %}active{% endif %}"><i class="fas fa-book"></i> My Courses</a>
+        <a href="/student/all-courses" class="{% if page == 'all-courses' %}active{% endif %}"><i class="fas fa-th-list"></i> All Courses</a>
+        <a href="/student/analytics" class="{% if page == 'analytics' %}active{% endif %}"><i class="fas fa-chart-line"></i> Analytics</a>
+        <a href="/student/profile" class="{% if page == 'profile' %}active{% endif %}"><i class="fas fa-user"></i> Profile</a>
+        <a href="/student/settings" class="{% if page == 'settings' %}active{% endif %}"><i class="fas fa-cog"></i> Settings</a>
         <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
 
         <!-- Theme Toggle -->
@@ -46,7 +41,6 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="/static/js/instructor_dash.js"></script>
 
   <!-- Dark Mode Persistence -->
   <script>

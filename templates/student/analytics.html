@@ -1,0 +1,153 @@
+{% extends "student/base.html" %}
+{% block title %}Analytics{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='student_analytics.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-dashboard">
+  <h2 class="analytics-title"><i class="fas fa-chart-bar"></i> Your Analytics Overview</h2>
+  <section class="charts">
+    <div class="chart-box">
+      <h3>Courses Overview</h3>
+      <canvas id="coursesOverview"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Top Students Leaderboard</h3>
+      <canvas id="leaderboardChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Learning Time Comparison</h3>
+      <canvas id="timeComparisonChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Weekly Activity</h3>
+      <canvas id="weeklyActivityChart"></canvas>
+    </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+console.log("Analytics script loaded!");
+
+// Get CSS color variables for dynamic theming
+const computedStyle = getComputedStyle(document.documentElement);
+const textColor = computedStyle.getPropertyValue('--text') || "#f1f5f9";
+const gridColor = computedStyle.getPropertyValue('--border') || "#475569";
+
+const coursesOverviewData = {{ courses_overview|tojson }};
+const leaderboardData = {{ leaderboard_chart|tojson }};
+const timeComparisonData = {{ time_comparison_chart|tojson }};
+const weeklyActivityData = {{ weekly_activity_chart|tojson }};
+
+console.log("coursesOverviewData:", coursesOverviewData);
+console.log("leaderboardData:", leaderboardData);
+console.log("timeComparisonData:", timeComparisonData);
+console.log("weeklyActivityData:", weeklyActivityData);
+
+// --- Courses Overview (Bar) ---
+if (coursesOverviewData && coursesOverviewData.labels && coursesOverviewData.datasets) {
+  new Chart(document.getElementById('coursesOverview'), {
+    type: 'bar',
+    data: coursesOverviewData,
+    options: {
+      plugins: { 
+        legend: { display: false, labels: { color: textColor } } 
+      },
+      scales: {
+        x: { 
+          ticks: { color: textColor, font: {weight: 600} }, 
+          grid: { color: gridColor }
+        },
+        y: { 
+          beginAtZero: true, 
+          ticks: { color: textColor }, 
+          grid: { color: gridColor }
+        }
+      }
+    }
+  });
+}
+
+// --- Leaderboard (Horizontal Bar) ---
+if (leaderboardData && leaderboardData.labels && leaderboardData.datasets) {
+  new Chart(document.getElementById('leaderboardChart'), {
+    type: 'bar',
+    data: leaderboardData,
+    options: {
+      indexAxis: 'y',
+      plugins: { 
+        legend: { display: false, labels: { color: textColor } } 
+      },
+      elements: { bar: { borderRadius: 10 } },
+      scales: {
+        x: { 
+          beginAtZero: true, 
+          ticks: { color: textColor }, 
+          grid: { color: gridColor } 
+        },
+        y: { 
+          ticks: { color: textColor }, 
+          grid: { display: false }
+        }
+      }
+    }
+  });
+}
+
+// --- Learning Time Comparison (Bar) ---
+if (timeComparisonData && timeComparisonData.labels && timeComparisonData.datasets) {
+  new Chart(document.getElementById('timeComparisonChart'), {
+    type: 'bar',
+    data: timeComparisonData,
+    options: {
+      plugins: { 
+        legend: { display: false, labels: { color: textColor } } 
+      },
+      elements: { bar: { borderRadius: 10 } },
+      scales: {
+        x: { 
+          ticks: { color: textColor }, 
+          grid: { color: gridColor } 
+        },
+        y: { 
+          beginAtZero: true, 
+          ticks: { color: textColor }, 
+          grid: { color: gridColor }
+        }
+      }
+    }
+  });
+}
+
+// --- Weekly Activity (Line/Area) ---
+if (weeklyActivityData && weeklyActivityData.labels && weeklyActivityData.datasets) {
+  new Chart(document.getElementById('weeklyActivityChart'), {
+    type: 'line',
+    data: weeklyActivityData,
+    options: {
+      plugins: { 
+        legend: { labels: { color: textColor } } 
+      },
+      elements: { 
+        line: { tension: 0.36, borderWidth: 3 }, 
+        point: { radius: 5, backgroundColor: "#6366f1" } 
+      },
+      scales: {
+        x: { 
+          ticks: { color: textColor, font: { weight: 600 } }, 
+          grid: { color: gridColor } 
+        },
+        y: { 
+          beginAtZero: true, 
+          ticks: { color: textColor }, 
+          grid: { color: gridColor }
+        }
+      }
+    }
+  });
+}
+</script>
+{% endblock %}

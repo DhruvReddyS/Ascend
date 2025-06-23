@@ -1,0 +1,7 @@
+Flask
+pymongo
+bcrypt
+cloudinary
+python-dotenv
+gunicorn
+Werkzeug  

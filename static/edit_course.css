@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --primary-blue: #3b82f6;
+  --primary-dark: #0f172a;
+  --danger: #ef4444;
+  --success: #10b981;
+  --bg-light: #f9fafb;
+  --bg-dark: #1e1e2f;
+  --text-light: #f1f5f9;
+  --text-dark: #1f2937;
+  --text-muted-light: #6b7280;
+  --text-muted-dark: #94a3b8;
+  --card-bg-light: #ffffff;
+  --card-bg-dark: #2d2e3a;
+  --border-light: #e2e8f0;
+  --border-dark: #334155;
+  --shadow-light: rgba(0, 0, 0, 0.06);
+  --shadow-dark: rgba(0, 0, 0, 0.3);
+  --transition: 0.3s ease-in-out;
+}
+
+[data-theme="light"] {
+  --bg: var(--bg-light);
+  --text: var(--text-dark);
+  --text-muted: var(--text-muted-light);
+  --card-bg: var(--card-bg-light);
+  --border: var(--border-light);
+  --shadow: var(--shadow-light);
+}
+
+[data-theme="dark"] {
+  --bg: var(--bg-dark);
+  --text: var(--text-light);
+  --text-muted: var(--text-muted-dark);
+  --card-bg: var(--card-bg-dark);
+  --border: var(--border-dark);
+  --shadow: var(--shadow-dark);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  padding: 2rem;
+  margin: 0;
+  transition: var(--transition);
+}
+
+.edit-course-container {
+  max-width: 100%;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 2rem 3rem;
+  background-color: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 0 12px var(--shadow);
+  transition: var(--transition);
+}
+
+.page-heading {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.course-form-group {
+  margin-bottom: 1.5rem;
+}
+
+.course-form-group label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: var(--text-muted);
+}
+
+.course-form-group input,
+.course-form-group textarea,
+.course-form-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  color: var(--text);
+  transition: var(--transition);
+  font-size: 0.95rem;
+}
+
+.course-form-group input:focus,
+.course-form-group textarea:focus,
+.course-form-group select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.module-title,
+.chapter-title,
+.module-desc,
+.chapter-desc {
+  margin-top: 0.8rem;
+  margin-bottom: 0.8rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  width: 100%;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.module-title:focus,
+.chapter-title:focus,
+.module-desc:focus,
+.chapter-desc:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+#thumbnail-preview img {
+  max-height: 140px;
+  margin-top: 0.75rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px var(--shadow);
+}
+
+#thumbnail-preview button {
+  background: var(--danger);
+  color: white;
+  border: none;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+button {
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.95rem;
+}
+
+button[type="submit"],
+.btn-add-module,
+.btn-add-chapter,
+.btn-add-topic,
+.btn-delete {
+  padding: 0.7rem 1.4rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+button[type="submit"] {
+  background: var(--primary-blue);
+  color: white;
+}
+
+.btn-add-module,
+.btn-add-chapter,
+.btn-add-topic {
+  background: var(--primary-dark);
+  color: white;
+  margin: 1rem 0;
+}
+
+.btn-add-module:hover,
+.btn-add-chapter:hover,
+.btn-add-topic:hover,
+button[type="submit"]:hover {
+  background: var(--primary-blue);
+  opacity: 0.95;
+}
+
+.btn-delete {
+  background: var(--danger);
+  color: white;
+  margin-left: auto;
+}
+
+.btn-delete:hover {
+  opacity: 0.9;
+}
+
+.toast {
+  background-color: var(--danger);
+  color: white;
+  padding: 0.9rem 1.4rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 18px var(--shadow);
+  margin-bottom: 0.6rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.course-module,
+.course-chapter,
+.course-topic {
+  margin-top: 1rem;
+  border-left: 4px solid var(--primary-blue);
+  padding-left: 1rem;
+  border-radius: 8px;
+  background: var(--card-bg);
+  padding: 1rem;
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+.course-topic input,
+.course-topic textarea,
+.course-topic select {
+  margin-bottom: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.course-topic input:focus,
+.course-topic textarea:focus,
+.course-topic select:focus {
+  border-color: var(--primary-blue);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.course-topic a {
+  display: inline-block;
+  margin-top: 0.4rem;
+  color: var(--primary-blue);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.course-topic a:hover {
+  text-decoration: underline;
+}
+
+.topic-number {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+  color: var(--text-muted);
+}
+
+details {
+  margin: 1.5rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: 0 1px 3px var(--shadow);
+  transition: var(--transition);
+}
+
+details[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+
+details summary {
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 1rem 1.2rem;
+  background: var(--bg);
+  color: var(--text);
+  transition: var(--transition);
+  list-style: none;
+}
+
+details summary::after {
+  content: '\f078';
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  transition: transform 0.3s;
+}
+
+details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.instructor-content-wrapper,
+main.content-area {
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}

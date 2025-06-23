@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Course Detail | Ascend</title>
+  <link rel="stylesheet" href="/static/course-detail.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">Ascend</div>
+    <a href="/signup" class="btn">Create Account</a>
+  </header>
+
+  <!-- Main Container -->
+  <main class="course-container">
+    
+    <!-- Main Course Content -->
+    <section class="course-content">
+      <h1>Introduction to JavaScript</h1>
+      <p class="subtitle">Learn the fundamentals of JavaScript — the language of the web.</p>
+
+      <div class="meta">
+        <p><strong>Difficulty:</strong> Beginner</p>
+        <p><strong>Category:</strong> Web Development</p>
+        <p><strong>Language:</strong> English</p>
+        <p><strong>Prerequisites:</strong> None</p>
+        <p><strong>Instructor:</strong></p>
+      </div>
+
+      <div class="instructor-box">
+        <img src="/static/images/instructor.jpg" alt="Instructor">
+        <div>
+          <h3>John Doe</h3>
+          <p>Frontend Developer & Mentor</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Description</h2>
+        <p>This course introduces you to JavaScript programming from scratch. You’ll explore variables, data types, loops, functions, DOM manipulation, and more with real examples and hands-on exercises.</p>
+      </div>
+
+      <div class="section">
+        <h2>What You’ll Learn</h2>
+        <ul class="checklist">
+          <li>Core JavaScript syntax and concepts</li>
+          <li>DOM manipulation and event handling</li>
+          <li>Functions, objects, and arrays</li>
+          <li>Working with forms and user input</li>
+          <li>Project: Build a simple interactive website</li>
+        </ul>
+      </div>
+
+      <!-- Course Structure -->
+      <section class="course-structure">
+        <h2 class="structure-title">Course Structure</h2>
+
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span class="section-title"><i class="fas fa-chevron-down"></i> Module 1: Basics of JavaScript</span>
+            <span class="section-meta">3 chapters</span>
+          </div>
+          <div class="accordion-body">
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>What is JavaScript?</span></div>
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>Variables and Data Types</span></div>
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>Basic Operators and Expressions</span></div>
+          </div>
+        </div>
+
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span class="section-title"><i class="fas fa-chevron-down"></i> Module 2: Control Flow</span>
+            <span class="section-meta">2 chapters</span>
+          </div>
+          <div class="accordion-body">
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>If-Else and Switch Statements</span></div>
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>Loops: For, While</span></div>
+          </div>
+        </div>
+
+        <div class="accordion-section">
+          <div class="accordion-header">
+            <span class="section-title"><i class="fas fa-chevron-down"></i> Module 3: DOM & Events</span>
+            <span class="section-meta">3 chapters</span>
+          </div>
+          <div class="accordion-body">
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>DOM Selection and Manipulation</span></div>
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>Event Listeners</span></div>
+            <div class="lecture-row"><i class="fas fa-play-circle"></i><span>Mini Project: Interactive To-Do List</span></div>
+          </div>
+        </div>
+
+      </section>
+    </section>
+
+    <!-- Sidebar -->
+    <div class="course-sidebar-card">
+      <img src="/static/images/js.jpeg" alt="Course Thumbnail" class="course-thumbnail" />
+
+      <button class="enroll-btn">Enroll Now</button>
+
+      <h3 class="sidebar-title">What’s in the course?</h3>
+      <ul class="course-features-list refined">
+        <li><i class="fas fa-sync-alt"></i><span>Lifetime access & free updates</span></li>
+        <li><i class="fas fa-project-diagram"></i><span>Hands-on project guidance</span></li>
+        <li><i class="fas fa-file-download"></i><span>Downloadable resources</span></li>
+        <li><i class="fas fa-lightbulb"></i><span>Quizzes for knowledge check</span></li>
+        <li><i class="fas fa-award"></i><span>Certificate of completion</span></li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>🚀 Ascend | Unlock your full potential</p>
+    <p>© 2025 Ascend. All rights reserved.</p>
+  </footer>
+
+  <script>
+    const headers = document.querySelectorAll(".accordion-header");
+    headers.forEach(header => {
+      header.addEventListener("click", () => {
+        const section = header.parentElement;
+        section.classList.toggle("open");
+
+        const icon = header.querySelector("i");
+        icon.classList.toggle("fa-chevron-down");
+        icon.classList.toggle("fa-chevron-up");
+
+        const body = section.querySelector(".accordion-body");
+        body.style.maxHeight = section.classList.contains("open") ? body.scrollHeight + "px" : "0";
+      });
+    });
+  </script>
+</body>
+</html>

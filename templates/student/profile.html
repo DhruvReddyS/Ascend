@@ -1,0 +1,111 @@
+{% extends "student/base.html" %}
+{% block title %}Profile{% endblock %}
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='student_profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+  <form method="POST" enctype="multipart/form-data" class="profile-form" autocomplete="off">
+    <div class="profile-left">
+      <div class="profile-avatar">
+        <img src="{{ user.profile_image or url_for('static', filename='images/std.png') }}"
+             alt="Profile Picture" id="profilePicPreview">
+        <input type="file" name="profile_image" id="profileImageInput" accept="image/*" onchange="previewProfilePic(event)">
+        <label for="profileImageInput" class="btn upload-btn">
+          <i class="fas fa-camera"></i> Change Photo
+        </label>
+        {% if user.profile_image %}
+          <button type="button" class="btn danger-btn" id="removePhotoBtn" onclick="removePhoto()">
+            <i class="fas fa-trash"></i> Remove Photo
+          </button>
+        {% endif %}
+      </div>
+      <div class="profile-meta">
+        <h2>{{ user.fullname }}</h2>
+        <span class="profile-role">Student</span>
+        <div class="profile-socials">
+          {% if user.linkedin %}<a href="{{ user.linkedin }}" target="_blank"><i class="fab fa-linkedin"></i></a>{% endif %}
+          {% if user.github %}<a href="{{ user.github }}" target="_blank"><i class="fab fa-github"></i></a>{% endif %}
+          <!-- Add more socials as needed -->
+        </div>
+      </div>
+    </div>
+    <div class="profile-right">
+      <div class="form-group">
+        <label for="fullname">Full Name</label>
+        <input type="text" name="fullname" id="fullname" value="{{ user.fullname }}" required>
+      </div>
+      <div class="form-group">
+        <label for="username">Username/Email</label>
+        <input type="text" name="username" id="username" value="{{ user.username }}" readonly>
+      </div>
+      <div class="form-group">
+        <label for="mobile">Mobile</label>
+        <input type="text" name="mobile" id="mobile" value="{{ user.mobile or '' }}">
+      </div>
+      <div class="form-group">
+        <label for="achievements">Achievements</label>
+        <textarea name="achievements" id="achievements" rows="2" placeholder="Share your milestones, certifications, awards">{{ user.achievements or '' }}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="skills">Skills <span class="muted">(comma-separated)</span></label>
+        <input type="text" name="skills" id="skills" value="{{ user.skills or '' }}" placeholder="Python, Web, ML">
+        <div id="skillChips" class="chips">
+          {% if user.skills %}
+            {% for skill in user.skills.split(',') %}
+              <span class="chip">{{ skill.strip() }}</span>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+      <div class="form-group socials-row">
+        <label>Social Links</label>
+        <div class="socials">
+          <input type="url" name="linkedin" placeholder="LinkedIn URL" value="{{ user.linkedin or '' }}">
+          <input type="url" name="github" placeholder="GitHub URL" value="{{ user.github or '' }}">
+        </div>
+      </div>
+      <button type="submit" class="btn primary-btn">Update Profile</button>
+      <div class="profile-feedback">{% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, msg in messages %}
+          <span class="toast {{ category }}">{{ msg }}</span>
+        {% endfor %}
+      {% endwith %}</div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function previewProfilePic(event) {
+  const input = event.target;
+  const preview = document.getElementById('profilePicPreview');
+  if (input.files && input.files[0]) {
+    preview.src = URL.createObjectURL(input.files[0]);
+  }
+}
+// Remove photo logic (send a POST with a 'remove_photo' flag)
+function removePhoto() {
+  if(confirm("Remove your profile photo?")) {
+    const form = document.querySelector('.profile-form');
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'remove_photo';
+    input.value = '1';
+    form.appendChild(input);
+    form.submit();
+  }
+}
+
+// Simple chips preview
+document.getElementById('skills').addEventListener('input', function(e){
+  const chipWrap = document.getElementById('skillChips');
+  chipWrap.innerHTML = '';
+  this.value.split(',').forEach(skill => {
+    if(skill.trim()) chipWrap.innerHTML += `<span class="chip">${skill.trim()}</span>`;
+  });
+});
+</script>
+{% endblock %}

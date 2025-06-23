@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{ course.title or "Course Detail" }} | Ascend</title>
+  <!-- Instant theme application to avoid white flash -->
+  <script>
+    const t = localStorage.getItem('ascend_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', t);
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='view_course.css') }}" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+  <button id="theme-toggle" class="theme-toggle" title="Switch theme">
+    <i class="fas fa-moon"></i>
+  </button>
+  <a href="javascript:history.back()" class="back-arrow" title="Go back">
+    <i class="fas fa-arrow-left"></i>
+  </a>
+
+  <main class="course-container">
+    <section class="course-content">
+      <h1>{{ course.title }}</h1>
+      <p class="subtitle">{{ course.subtitle or course.description }}</p>
+      <div class="meta">
+        <p><strong>Difficulty:</strong> {{ course.difficulty|capitalize }}</p>
+        <p><strong>Category:</strong> {{ course.category }}</p>
+        <p><strong>Language:</strong> {{ course.language }}</p>
+        <p><strong>Prerequisites:</strong> {{ course.prerequisites or 'None' }}</p>
+        <p><strong>Instructor:</strong></p>
+      </div>
+
+      <div class="instructor-box">
+        <img src="{{ course.instructor_photo or '/static/images/instructor.jpg' }}" alt="Instructor">
+        <div>
+          <h3>{{ course.instructor_name }}</h3>
+          <p>{{ course.instructor_tagline or '' }}</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Description</h2>
+        <p>{{ course.description }}</p>
+      </div>
+
+      <div class="section">
+        <h2>What You’ll Learn</h2>
+        <ul class="checklist">
+          {% for point in course.learning_objectives.split('\n') if point.strip() %}
+            <li><i class="fas fa-check-circle"></i> <span>{{ point }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <section class="course-structure">
+        <h2 class="structure-title">Course Structure</h2>
+        {% for module in course.structure.modules %}
+          <div class="accordion-section">
+            <div class="accordion-header">
+              <span class="section-title">
+                <i class="fas fa-chevron-down"></i>
+                Module {{ loop.index }}: {{ module.title }}
+              </span>
+              <span class="section-meta">{{ module.chapters|length }} chapters</span>
+            </div>
+            <div class="accordion-body">
+              {% for chapter in module.chapters %}
+                <div class="chapter-block">
+                  <div class="chapter-title">
+                    <i class="fas fa-book"></i>
+                    <span>Chapter {{ loop.index }}: {{ chapter.title }}</span>
+                  </div>
+                  <div class="topics-list">
+                    {% for topic in chapter.topics %}
+                      <div class="topic-row">
+                        <span class="topic-icon {{ topic.content_type }}">
+                          {% if topic.content_type == "pdf" %}
+                            <i class="fas fa-file-pdf"></i>
+                          {% elif topic.content_type == "video" %}
+                            <i class="fas fa-video"></i>
+                          {% elif topic.content_type == "image" %}
+                            <i class="fas fa-image"></i>
+                          {% elif topic.content_type == "link" %}
+                            <i class="fas fa-link"></i>
+                          {% else %}
+                            <i class="fas fa-file-alt"></i>
+                          {% endif %}
+                        </span>
+                        <span class="topic-title">{{ topic.title }}</span>
+                        <span class="topic-time">
+                          <i class="fas fa-clock"></i>
+                          {{ topic.estimated_time }} min
+                        </span>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </section>
+    </section>
+
+    <div class="course-sidebar-card">
+      <img src="{{ course.thumbnail_url }}" alt="Course Thumbnail" class="course-thumbnail">
+      <button class="enroll-btn" id="enroll-btn" data-course="{{ course._id }}">
+        <i class="fas fa-sign-in-alt"></i> Enroll Now
+      </button>
+
+      <div id="enroll-modal" class="modal-backdrop" style="display:none;">
+        <div class="modal-dialog">
+          <h3>Confirm Enrollment</h3>
+          <p>Are you sure you want to enroll in <strong>{{ course.title }}</strong>?</p>
+          <div class="modal-actions">
+            <button id="cancel-enroll" class="btn cancel-btn">Cancel</button>
+            <button id="confirm-enroll" class="btn confirm-btn">Yes, Enroll</button>
+          </div>
+        </div>
+      </div>
+      <div id="enroll-toast"></div>
+
+      <h3 class="sidebar-title">What’s in the course?</h3>
+      <ul class="course-features-list refined">
+        <li><i class="fas fa-sync-alt"></i><span>Lifetime access & free updates</span></li>
+        <li><i class="fas fa-project-diagram"></i><span>Hands-on project guidance</span></li>
+        <li><i class="fas fa-file-download"></i><span>Downloadable resources</span></li>
+        <li><i class="fas fa-lightbulb"></i><span>Quizzes for knowledge check</span></li>
+        <li><i class="fas fa-award"></i><span>Certificate of completion</span></li>
+      </ul>
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll(".accordion-header").forEach(header => {
+      header.addEventListener("click", () => {
+        const section = header.parentElement;
+        section.classList.toggle("open");
+        const icon = header.querySelector("i");
+        icon.classList.toggle("fa-chevron-down");
+        icon.classList.toggle("fa-chevron-up");
+        const body = section.querySelector(".accordion-body");
+        if(section.classList.contains("open")) {
+          body.style.maxHeight = body.scrollHeight + "px";
+        } else {
+          body.style.maxHeight = "0";
+        }
+      });
+    });
+
+    const enrollBtn = document.getElementById("enroll-btn");
+    const modal = document.getElementById("enroll-modal");
+    const cancelBtn = document.getElementById("cancel-enroll");
+    const confirmBtn = document.getElementById("confirm-enroll");
+    const toast = document.getElementById("enroll-toast");
+
+    enrollBtn.addEventListener("click", () => { modal.style.display = "flex"; });
+    cancelBtn.addEventListener("click", () => { modal.style.display = "none"; });
+
+    confirmBtn.addEventListener("click", () => {
+      const courseId = enrollBtn.getAttribute("data-course");
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = "Enrolling...";
+      fetch(`/student/enroll/${courseId}`, {
+        method: "POST",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "Content-Type": "application/json"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        modal.style.display = "none";
+        showToast(data.message || (data.success ? "Enrolled!" : "Could not enroll"), !data.success);
+        if (data.success) {
+          enrollBtn.disabled = true;
+          enrollBtn.innerHTML = '<i class="fas fa-check"></i> Enrolled';
+        }
+      })
+      .catch(() => {
+        showToast("Something went wrong. Try again.", true);
+      })
+      .finally(() => {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = "Yes, Enroll";
+      });
+    });
+
+    function showToast(msg, error) {
+      toast.textContent = msg;
+      toast.style.background = error ? "#e11d48" : "#222";
+      toast.style.display = "block";
+      setTimeout(() => { toast.style.display = "none"; }, 2200);
+    }
+
+    const themeBtn = document.getElementById('theme-toggle');
+    function setTheme(mode) {
+      document.body.setAttribute('data-theme', mode);
+      themeBtn.innerHTML = mode === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      localStorage.setItem('ascend_theme', mode);
+    }
+    const saved = localStorage.getItem('ascend_theme');
+    setTheme(saved ? saved : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+    themeBtn.onclick = () => {
+      setTheme(document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    };
+  </script>
+</body>
+</html>

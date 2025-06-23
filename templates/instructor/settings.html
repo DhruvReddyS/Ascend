@@ -1,0 +1,69 @@
+{% extends "instructor/base.html" %}
+{% block title %}Settings | Instructor{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+
+  <!-- 🔔 FLASH MESSAGES -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <h2><i class="fas fa-cogs"></i> Settings</h2>
+
+  <div class="settings-tabs">
+    <button class="tab-button active" onclick="openTab(event, 'profile')"><i class="fas fa-user"></i> Profile</button>
+    <button class="tab-button" onclick="openTab(event, 'security')"><i class="fas fa-lock"></i> Security</button>
+  </div>
+
+  <!-- Profile Update -->
+  <div class="tab-content active" id="profile">
+    <h3>Update Profile</h3>
+    <form method="POST" action="{{ url_for('update_profile') }}">
+      <label for="fullname">Full Name</label>
+      <input type="text" id="fullname" name="fullname" value="{{ user.fullname }}" required>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" value="{{ user.email }}" disabled>
+      <button type="submit" class="btn primary">Update</button>
+    </form>
+  </div>
+
+  <!-- Password Change -->
+  <div class="tab-content" id="security">
+    <h3>Change Password</h3>
+    <form method="POST" action="{{ url_for('change_password') }}">
+      <label for="current">Current Password</label>
+      <input type="password" id="current" name="current_password" required>
+      <label for="new">New Password</label>
+      <input type="password" id="new" name="new_password" required>
+      <label for="confirm">Confirm New Password</label>
+      <input type="password" id="confirm" name="confirm_password" required>
+      <button type="submit" class="btn warning">Change Password</button>
+    </form>
+  </div>
+
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  const contents = document.querySelectorAll('.tab-content');
+  const buttons = document.querySelectorAll('.tab-button');
+  contents.forEach(tab => tab.classList.remove('active'));
+  buttons.forEach(btn => btn.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+  evt.currentTarget.classList.add('active');
+}
+</script>
+{% endblock %}

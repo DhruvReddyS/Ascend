@@ -1,0 +1,171 @@
+{% extends "student/base.html" %}
+{% block title %}Student Dashboard{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='student-dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<header class="topbar">
+  <h1>Welcome back, {{ user.fullname }}!</h1>
+ <a href="/student/profile" class="user-info">
+  <img src="{{ user.profile_image or url_for('static', filename='images/std.png') }}" alt="Profile" class="profile-img"/>
+  <span>{{ user.fullname }}</span>
+</a>
+
+</header>
+
+<!-- Stats Grid -->
+<section class="stats-grid">
+  <div class="stat-card"><i class="fas fa-layer-group icon purple"></i>
+    <div class="stat-info"><h4>Total Courses</h4><p>{{ stats.courses_enrolled + stats.courses_completed }}</p></div>
+  </div>
+  <div class="stat-card"><i class="fas fa-user-graduate icon blue"></i>
+    <div class="stat-info"><h4>Courses Enrolled</h4><p>{{ stats.courses_enrolled }}</p></div>
+  </div>
+  <div class="stat-card"><i class="fas fa-check-circle icon green"></i>
+    <div class="stat-info"><h4>Courses Completed</h4><p>{{ stats.courses_completed }}</p></div>
+  </div>
+  <div class="stat-card"><i class="fas fa-list-ul icon orange"></i>
+    <div class="stat-info"><h4>Topics Covered</h4><p>{{ stats.topics_covered }}</p></div>
+  </div>
+</section>
+
+<!-- Charts Section -->
+<section class="charts">
+  <div class="chart-box"><h3>Course Progress</h3><canvas id="progressChart"></canvas></div>
+  <div class="chart-box"><h3>Weekly Activity</h3><canvas id="activityChart"></canvas></div>
+</section>
+
+<!-- Enrolled Courses -->
+<section class="quick-nav">
+  <div class="section-header">
+    <h1>My Courses</h1>
+    <a href="/student/my-courses" class="view-all-btn">
+      <i class="fas fa-th-list"></i> View All My Courses
+    </a>
+  </div>
+  <div class="enrolled-courses" id="enrolledCourses">
+    {% set max_courses = 8 %}
+    {% for course in enrolled_courses[:max_courses] %}
+      <div class="course-card{% if course.progress == 100 %} completed{% endif %}">
+        <img src="{{ course.image }}" alt="Course" class="course-image" />
+        <div class="course-details">
+          <h3>{{ course.title }}</h3>
+          <p>{{ course.desc }}</p>
+          <div class="progress-bar">
+            <div class="progress" style="width: {{ course.progress }}%;"></div>
+          </div>
+          <span class="progress-text">{{ course.progress }}% Completed</span>
+          <a href="{{ url_for('student_view_course', course_id=course.id) }}" class="btn continue-btn">
+            <i class="fas fa-play"></i> Continue Learning
+          </a>
+        </div>
+        {% if course.progress == 100 %}
+        <div class="badge-completed"><i class="fas fa-trophy"></i> Completed</div>
+        {% endif %}
+      </div>
+    {% else %}
+      <p class="no-courses"><i class="fas fa-exclamation-circle"></i> You have not enrolled in any courses yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+function getCssVar(name, fallback) {
+  let val = getComputedStyle(document.documentElement).getPropertyValue(name);
+  return val ? val.trim() : fallback;
+}
+
+const textColor   = getCssVar('--text', "#f1f5f9");
+const gridColor   = getCssVar('--border', "#475569");
+const legendColor = getCssVar('--text-muted', "#a3aed6");
+const barColor    = getCssVar('--primary', "#3b82f6");
+const lineColor   = getCssVar('--primary', "#6366f1");
+const areaColor   = getCssVar('--primary-fade', "rgba(99,102,241,0.18)");
+
+const labelFont = { family: "'Inter','Poppins',sans-serif", size: 13, weight: '500' };
+
+const courseLabels   = {{ chart_data.course_labels | tojson }};
+const courseProgress = {{ chart_data.course_progress | tojson }};
+const weekLabels     = {{ chart_data.weekly_days | tojson }};
+const weekMinutes    = {{ chart_data.weekly_minutes | tojson }};
+
+// --- Bar Chart: Course Progress ---
+new Chart(document.getElementById('progressChart'), {
+  type: 'bar',
+  data: {
+    labels: courseLabels,
+    datasets: [{
+      label: 'Completion %',
+      data: courseProgress,
+      backgroundColor: '#3b82f6',
+      // No borderRadius!
+      // maxBarThickness: 60, // Optional for even more width control
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { labels: { color: textColor } }
+    },
+    layout: { padding: { left: 10, right: 10, top: 0, bottom: 4 } }, // top: 0
+    scales: {
+      x: {
+        barPercentage: 0.95,         // as close to 1 as you want
+        categoryPercentage: 0.92,    // as close to 1 as you want
+        ticks: { color: textColor },
+        grid: { color: gridColor }
+      },
+      y: {
+        beginAtZero: true,
+        // Remove max or suggestedMax unless you need them
+        ticks: { color: textColor },
+        grid: { color: gridColor }
+      }
+    }
+  }
+});
+
+
+// --- Line Chart: Weekly Activity ---
+new Chart(document.getElementById('activityChart'), {
+  type: 'line',
+  data: {
+    labels: weekLabels,
+    datasets: [{
+      label: 'Minutes Spent',
+      data: weekMinutes,
+      borderColor: lineColor,
+      backgroundColor: areaColor,
+      tension: 0.37,
+      fill: true,
+      pointBackgroundColor: lineColor,
+      pointRadius: 5
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { labels: { color: legendColor, font: labelFont } },
+      title: { display: false }
+    },
+    layout: { padding: { left: 10, right: 10, top: 8, bottom: 4 } },
+    scales: {
+      x: {
+        ticks: { color: textColor, font: labelFont, padding: 6 },
+        grid:  { color: gridColor, borderDash: [3, 2], drawBorder: false }
+      },
+      y: {
+        beginAtZero: true,
+        title: { display: false },
+        ticks: { color: textColor, font: labelFont, padding: 6 },
+        grid:  { color: gridColor, borderDash: [3, 2], drawBorder: false }
+      }
+    }
+  }
+});
+</script>
+{% endblock %}

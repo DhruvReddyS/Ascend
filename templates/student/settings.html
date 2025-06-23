@@ -1,0 +1,97 @@
+{% extends "instructor/base.html" %}
+{% block title %}Settings | Student{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <h2><i class="fas fa-cogs"></i> Settings</h2>
+
+  <div class="settings-tabs">
+    <button class="tab-button active" onclick="openTab(event, 'changePassword')">
+      <i class="fas fa-lock"></i> Change Password
+    </button>
+    <button class="tab-button" onclick="openTab(event, 'unenrollCourse')">
+      <i class="fas fa-sign-out-alt"></i> Unenroll from Course
+    </button>
+    <button class="tab-button" onclick="openTab(event, 'deleteAccount')">
+      <i class="fas fa-trash-alt"></i> Delete Account
+    </button>
+  </div>
+
+  <!-- Change Password Tab -->
+  <div class="tab-content active" id="changePassword">
+    <h3>Change Password</h3>
+    <form id="changePasswordForm" method="POST" action="{{ url_for('student_change_password') }}">
+      <label for="oldPassword">Current Password</label>
+      <input type="password" id="oldPassword" name="old_password" required minlength="6">
+
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" name="new_password" required minlength="6">
+
+      <label for="confirmPassword">Confirm New Password</label>
+      <input type="password" id="confirmPassword" name="confirm_password" required minlength="6">
+
+      <button type="submit" class="btn primary">Update Password</button>
+    </form>
+  </div>
+
+  <!-- Unenroll from Course Tab -->
+  <div class="tab-content" id="unenrollCourse">
+    <h3>Unenroll From a Course</h3>
+   <form id="unenrollForm" method="POST" action="{{ url_for('student_unenroll', course_id='') }}">
+      <label for="courseSelect">Select Course to Unenroll</label>
+      <select id="courseSelect" name="course_id" required>
+        <option value="" disabled selected>-- Select a course --</option>
+        {% for course in enrolled_courses %}
+          <option value="{{ course._id }}">{{ course.title }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn danger">Unenroll</button>
+    </form>
+  </div>
+
+  <!-- Delete Account Tab -->
+  <div class="tab-content" id="deleteAccount">
+    <h3>Delete Account</h3>
+    <p>
+      Deleting your account is <strong>permanent</strong> and <strong>cannot be undone</strong>.
+      All your data, courses, progress, and settings will be <strong>irreversibly removed</strong>.
+    </p>
+    <p>Please confirm your decision carefully.</p>
+    <form id="deleteAccountForm" method="POST" action="{{ url_for('student_delete_account') }}">
+      <button type="submit" class="btn danger">
+        <i class="fas fa-trash-alt"></i> Delete My Account
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<script>
+function openTab(evt, tabName) {
+  const contents = document.querySelectorAll('.tab-content');
+  const buttons = document.querySelectorAll('.tab-button');
+  contents.forEach(tab => tab.classList.remove('active'));
+  buttons.forEach(btn => btn.classList.remove('active'));
+  document.getElementById(tabName).classList.add('active');
+  evt.currentTarget.classList.add('active');
+}
+</script>
+{% endblock %}

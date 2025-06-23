@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>About Us | Ascend</title>
+  <link rel="stylesheet" href="/static/about.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">Ascend</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/courses">Courses</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/signin-up" class="btn">Get Started</a></li>
+    </ul>
+  </header>
+
+  <!-- Hero + Metrics Section -->
+  <section class="about-hero">
+    <div class="hero-left">
+      <span class="tagline">Empowering Growth</span>
+      <h1 class="typewriter">WE HAVE <span>SOLUTION</span></h1>
+      <p>
+        At <strong>Ascend</strong>, learning is flexible, accessible, and future-ready. Our mentors and curated paths help you build skills to thrive in today’s world.
+      </p>
+      <p>
+        Whether you're upskilling, starting out, or pivoting careers, Ascend offers expert support and real-world learning.
+      </p>
+      <ul class="hero-benefits">
+        <li> Personalized learning tailored to your goals</li>
+        <li> Expert-led courses with certifications</li>
+        <li>Lifetime access with flexible timelines</li>
+        <li> Peer support and mentorship</li>
+      </ul>
+      <p>
+        Join thousands who've unlocked their potential. Your journey starts here.
+      </p>
+      <a href="/signin-up" class="cta-btn">Get Started</a>
+    </div>
+
+    <div class="hero-right">
+      <section class="impact-metrics">
+        <h2>Why Learners Trust Ascend</h2>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <h3>10,000+</h3>
+            <p>Learners Empowered</p>
+          </div>
+          <div class="metric-card">
+            <h3>95%</h3>
+            <p>Completion Rate</p>
+          </div>
+          <div class="metric-card">
+            <h3>300+</h3>
+            <p>Expert Mentors</p>
+          </div>
+          <div class="metric-card">
+            <h3>4.9/5</h3>
+            <p>Avg Learner Rating</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><h3>What is Ascend?<span>+</span></h3><p class="answer">Ascend is a digital learning platform offering flexible, skill-based education with mentorship and certifications.</p></div>
+    <div class="faq-item"><h3>Are the courses self-paced?<span>+</span></h3><p class="answer">Yes, you can learn at your own pace with lifetime access to all course materials.</p></div>
+    <div class="faq-item"><h3>Do I get a certificate?<span>+</span></h3><p class="answer">Absolutely. After completing a course, you’ll receive a verifiable, shareable certificate.</p></div>
+    <div class="faq-item"><h3>Is there any cost to join Ascend?<span>+</span></h3><p class="answer">Many of our foundational courses are free. Premium content and mentorship come with affordable pricing plans.</p></div>
+    <div class="faq-item"><h3>Can I access Ascend on mobile devices?<span>+</span></h3><p class="answer">Yes. Ascend is fully responsive and works seamlessly across desktops, tablets, and mobile devices.</p></div>
+    <div class="faq-item"><h3>How do I track my progress?<span>+</span></h3><p class="answer">Once enrolled, your dashboard shows real-time progress tracking, completion stats, and skill checkpoints.</p></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>© 2025 Ascend. All rights reserved.</p>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/courses">Courses</a>
+        <a href="/signin-up">Get Started</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // FAQ toggles
+    document.querySelectorAll(".faq-item").forEach(item => {
+      item.addEventListener("click", () => {
+        const answer = item.querySelector(".answer");
+        const icon = item.querySelector("span");
+        const isVisible = answer.classList.contains("visible");
+
+        document.querySelectorAll(".faq-item .answer").forEach(ans => ans.classList.remove("visible"));
+        document.querySelectorAll(".faq-item").forEach(faq => faq.classList.remove("open"));
+        document.querySelectorAll(".faq-item span").forEach(sp => sp.textContent = "+");
+
+        if (!isVisible) {
+          answer.classList.add("visible");
+          item.classList.add("open");
+          icon.textContent = "−";
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,76 +1,121 @@
 {% extends "instructor/base.html" %}
 {% block title %}My Courses{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='my_courses.css') }}">
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='my_courses.css') }}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
 {% endblock %}
 
 {% block content %}
 <section class="my-courses">
   <div class="top-bar">
-    <h2>My Courses</h2>
-    <p>Manage and monitor your created courses</p>
+    <h2><i class="fas fa-book-open"></i> My Courses</h2>
   </div>
 
   <div class="search-filter-bar">
-    <input type="text" placeholder="🔍 Search courses..." class="search-input" />
+    <input type="text" placeholder="Search courses..." class="search-input" id="searchInput" />
     <select class="filter-dropdown" id="sortDropdown">
-      <option value="rating">Sort by: Rating</option>
-      <option value="students">Sort by: Students</option>
+      <option value="avg_rating">Sort by: Rating</option>
+      <option value="enrollment_count">Sort by: Students</option>
       <option value="duration">Sort by: Duration</option>
     </select>
-    <a href="{{ url_for('create_course') }}" class="create-btn">+ Create New Course</a>
+    <a href="{{ url_for('create_course') }}" class="create-btn">
+      <i class="fas fa-plus"></i> Create New Course
+    </a>
   </div>
 
-  <div class="course-grid" id="courseGrid">
-    {% for course in courses %}
+  <h3 class="section-heading"><i class="fas fa-bullhorn"></i> Published Courses</h3>
+  <div class="course-grid" id="publishedCourses">
+    {% for course in courses if course.status == 'published' %}
     <a href="{{ url_for('view_course', course_id=course._id) }}"
-       class="course-card {{ 'draft' if course.status == 'draft' }}"
-       data-rating="{{ course.rating or 0 }}"
-       data-students="{{ course.students or 0 }}"
-       data-duration="{{ course.duration | default(0, true) }}">
-
-      <img src="{{ course.thumbnail_url or url_for('static', filename='images/default.png') }}" alt="Course Image" class="course-banner">
-
+       class="course-card"
+       data-avg_rating="{{ course.avg_rating or 0 }}"
+       data-enrollment_count="{{ course.enrollment_count or 0 }}"
+       data-duration="{{ course.duration or 0 }}">
+      <img src="{{ course.thumbnail_url or url_for('static', filename='images/default.png') }}"
+           alt="Course Image"
+           class="course-banner">
       <div class="course-content">
         <h3 class="course-title">{{ course.title }}</h3>
         <p class="course-meta">
-          {% if course.students == 0 %}
-            No students enrolled
-          {% else %}
-            {{ course.students }} students
-          {% endif %} • ⭐ {{ course.rating or 0 }}/5
+          <i class="fas fa-users"></i> {{ course.enrollment_count }} students &nbsp;•&nbsp;
+          <i class="fas fa-star" style="color:#ffd700"></i> {{ course.avg_rating }}/5
         </p>
-
         <div class="course-details">
           <span><i class="fas fa-clock"></i> {{ course.duration or '—' }} hrs</span>
-          <span><i class="fas fa-layer-group"></i> {{ course.structure.modules | length }} Modules</span>
-          <span><i class="fas fa-book"></i> {{
-            course.structure.modules | map(attribute='chapters') | map('length') | sum
-          }} Chapters</span>
-          <span><i class="fas fa-puzzle-piece"></i> {{
-            course.structure.modules | map(attribute='chapters') | sum(start=[]) | map(attribute='topics') | map('length') | sum
-          }} Topics</span>
+          <span><i class="fas fa-layer-group"></i> {{ course.num_modules or 0 }} Modules</span>
+          <span><i class="fas fa-book"></i> {{ course.num_chapters or 0 }} Chapters</span>
+          <span><i class="fas fa-puzzle-piece"></i> {{ course.num_topics or 0 }} Topics</span>
         </div>
-
-        <p class="course-updated"><i class="fas fa-calendar-alt"></i> Last updated: {{ course.updated or 'Recently' }}</p>
+        <p class="course-updated">
+          <i class="fas fa-calendar-alt"></i> Last updated: {{ course.updated or 'Recently' }}
+        </p>
       </div>
     </a>
     {% else %}
-      <p>No courses available yet.</p>
+      <p>No published courses yet.</p>
+    {% endfor %}
+  </div>
+
+  <h3 class="section-heading"><i class="fas fa-edit"></i> Draft Courses</h3>
+  <div class="course-grid" id="draftCourses">
+    {% for course in courses if course.status == 'draft' %}
+    <a href="{{ url_for('view_course', course_id=course._id) }}"
+       class="course-card"
+       data-duration="{{ course.duration or 0 }}">
+      <img src="{{ course.thumbnail_url or url_for('static', filename='images/default.png') }}"
+           alt="Course Image"
+           class="course-banner">
+      <div class="course-content">
+        <h3 class="course-title">{{ course.title }}</h3>
+        <!-- No students/rating shown for drafts -->
+        <div class="course-details">
+          <span><i class="fas fa-clock"></i> {{ course.duration or '—' }} hrs</span>
+          <span><i class="fas fa-layer-group"></i> {{ course.num_modules or 0 }} Modules</span>
+          <span><i class="fas fa-book"></i> {{ course.num_chapters or 0 }} Chapters</span>
+          <span><i class="fas fa-puzzle-piece"></i> {{ course.num_topics or 0 }} Topics</span>
+        </div>
+        <p class="course-updated">
+          <i class="fas fa-calendar-alt"></i> Last updated: {{ course.updated or 'Recently' }}
+        </p>
+      </div>
+    </a>
+    {% else %}
+      <p>No draft courses yet.</p>
     {% endfor %}
   </div>
 </section>
 
 <script>
   const dropdown = document.getElementById("sortDropdown");
-  const courseGrid = document.getElementById("courseGrid");
+  const searchInput = document.getElementById("searchInput");
+  const publishedGrid = document.getElementById("publishedCourses");
+  const draftGrid = document.getElementById("draftCourses");
 
   dropdown.addEventListener("change", () => {
     const sortBy = dropdown.value;
-    const cards = Array.from(courseGrid.querySelectorAll(".course-card"));
-    cards.sort((a, b) => parseFloat(b.dataset[sortBy]) - parseFloat(a.dataset[sortBy]));
-    cards.forEach(card => courseGrid.appendChild(card));
+    const sortCards = (grid) => {
+      const cards = Array.from(grid.querySelectorAll(".course-card"));
+      cards.sort((a, b) => parseFloat(b.dataset[sortBy]) - parseFloat(a.dataset[sortBy]));
+      cards.forEach(card => grid.appendChild(card));
+    };
+    sortCards(publishedGrid);
+    // Only sort by duration for drafts (students/rating not shown)
+    if (sortBy === "duration") sortCards(draftGrid);
+  });
+
+  searchInput.addEventListener("input", () => {
+    const value = searchInput.value.toLowerCase();
+    const filterCards = (grid) => {
+      const cards = Array.from(grid.querySelectorAll(".course-card"));
+      cards.forEach(card => {
+        const title = card.querySelector(".course-title").textContent.toLowerCase();
+        card.style.display = title.includes(value) ? "flex" : "none";
+      });
+    };
+    filterCards(publishedGrid);
+    filterCards(draftGrid);
   });
 </script>
 {% endblock %}

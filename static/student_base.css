@@ -1,0 +1,158 @@
+/* ===== Student Dashboard Theme CSS (Matching Instructor Sidebar) ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root {
+  --primary-blue: #3b82f6;
+  --primary-dark: #0f172a;
+  --bg-light: #f9fafb;
+  --bg-dark: #1e1e2f;
+  --text-light: #f1f5f9;
+  --text-dark: #1f2937;
+  --text-muted-light: #6b7280;
+  --text-muted-dark: #94a3b8;
+  --card-bg-light: #ffffff;
+  --card-bg-dark: #2d2e3a;
+  --border-light: #e2e8f0;
+  --border-dark: #334155;
+  --shadow-light: rgba(0, 0, 0, 0.06);
+  --shadow-dark: rgba(0, 0, 0, 0.3);
+  --transition: 0.3s ease-in-out;
+}
+
+[data-theme="light"] {
+  --bg: var(--bg-light);
+  --text: var(--text-dark);
+  --text-muted: var(--text-muted-light);
+  --card-bg: var(--card-bg-light);
+  --border: var(--border-light);
+  --shadow: var(--shadow-light);
+}
+
+[data-theme="dark"] {
+  --bg: var(--bg-dark);
+  --text: var(--text-light);
+  --text-muted: var(--text-muted-dark);
+  --card-bg: var(--card-bg-dark);
+  --border: var(--border-dark);
+  --shadow: var(--shadow-dark);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background var(--transition), color var(--transition);
+}
+
+.dashboard-container {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.sidebar {
+  width: 220px;
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 10px var(--shadow);
+  border-right: 1px solid var(--border);
+}
+
+.sidebar .brand {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar nav a,
+.sidebar nav button.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--text);
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  position: relative;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active,
+.sidebar nav button.theme-toggle:hover {
+  background-color: var(--primary-blue);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.sidebar nav a i,
+.sidebar nav button.theme-toggle i {
+  width: 20px;
+  text-align: center;
+}
+
+.sidebar nav button.theme-toggle {
+  margin-top: 2rem;
+  justify-content: center;
+  font-size: 0.95rem;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1150px;
+  margin-left: 220px;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .main {
+    margin-left: 0;
+    padding: 2rem 1.5rem;
+  }
+}
+
+.sidebar nav a.active::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background-color: #ffffff;
+  border-radius: 0 4px 4px 0;
+  box-shadow: 2px 0 8px rgba(255, 255, 255, 0.3);
+}
+

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Courses | Ascend</title>
+  <link rel="stylesheet" href="/static/courses.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo">Ascend</div>
+    <ul class="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/courses" class="active">Courses</a></li>
+      <li><a href="/signin-up" class="btn">Get Started</a></li>
+    </ul>
+  </header>
+
+  <!-- Search Section -->
+  <section class="search-bar">
+    <h1><span id="typed-text"></span></h1>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search for courses..." />
+      <button>Search</button>
+    </div>
+  </section>
+
+  <!-- Course Grid -->
+ <!-- Course Grid -->
+<section class="course-grid">
+  <div class="course-card" data-aos="fade-up" data-aos-delay="100">
+    <img src="/static/images/machine.jpg" alt="ML" />
+    <h3>MACHINE LEARNING (Self-Paced)</h3>
+    <ul class="course-info">
+      <li><strong>Instructor:</strong> Dr. Rajeev Mehta</li>
+      <li><strong>Duration:</strong> 6 weeks</li>
+      <li><strong>Difficulty:</strong> <i class="fas fa-signal"></i> Intermediate</li>
+      <li><strong>Category:</strong> <i class="fas fa-brain"></i> AI & ML</li>
+    </ul>
+    <button class="enroll-btn">View Details</button>
+  </div>
+
+  <div class="course-card" data-aos="fade-up" data-aos-delay="200">
+    <img src="/static/images/data.jpg" alt="DS" />
+    <h3>DATA SCIENCE (Self-Paced)</h3>
+    <ul class="course-info">
+      <li><strong>Instructor:</strong> Prof. Nisha Patel</li>
+      <li><strong>Duration:</strong> 8 weeks</li>
+      <li><strong>Difficulty:</strong> <i class="fas fa-signal"></i> Advanced</li>
+      <li><strong>Category:</strong> <i class="fas fa-database"></i> Data Science</li>
+    </ul>
+    <button class="enroll-btn">View Details</button>
+  </div>
+
+  <div class="course-card" data-aos="fade-up" data-aos-delay="300">
+    <img src="/static/images/dsa.png" alt="DSA in Python" />
+    <h3>DSA in Python</h3>
+    <ul class="course-info">
+      <li><strong>Instructor:</strong> Mr. Rahul Iyer</li>
+      <li><strong>Duration:</strong> 5 weeks</li>
+      <li><strong>Difficulty:</strong> <i class="fas fa-signal"></i> Beginner</li>
+      <li><strong>Category:</strong> <i class="fas fa-code"></i> Programming</li>
+    </ul>
+    <button class="enroll-btn">View Details</button>
+  </div>
+
+  <div class="course-card" data-aos="fade-up" data-aos-delay="400">
+    <img src="/static/images/cyber.jpeg" alt="CYBER SECURITY" />
+    <h3>CYBER SECURITY</h3>
+    <ul class="course-info">
+      <li><strong>Instructor:</strong> Ms. Sneha Kulkarni</li>
+      <li><strong>Duration:</strong> 4 weeks</li>
+      <li><strong>Difficulty:</strong> <i class="fas fa-signal"></i> Beginner</li>
+      <li><strong>Category:</strong> <i class="fas fa-shield-alt"></i> Cybersecurity</li>
+    </ul>
+    <button class="enroll-btn">View Details</button>
+  </div>
+</section>
+
+
+  <!-- Footer -->
+  <footer class="ascend-footer">
+    <div class="footer-wrapper">
+      <div class="footer-brand">
+        <div class="footer-logo">🚀 <span>Ascend</span></div>
+        <p>Unlock your full potential with real-world learning, one step at a time.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Join Our Community</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Ascend. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // Typing effect
+    AOS.init();
+    var typed = new Typed("#typed-text", {
+      strings: ["Find Your Next Skill", "Learn Anytime, Anywhere", "Level Up Your Career"],
+      typeSpeed: 50,
+      backSpeed: 30,
+      loop: true
+    });
+  </script>
+</body>
+</html>

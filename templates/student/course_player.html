@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ASCEND Course Player</title>
+  <link rel="stylesheet" href="/static/course-player.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  />
+</head>
+<body>
+  <div class="progress-bar">
+    <div class="progress-bar-fill" id="progressBar"></div>
+  </div>
+
+  <div class="player-header">
+    <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+      <i class="fas fa-moon"></i>
+    </button>
+    <div class="progress-status" id="progressStatus">0 / 0 Topics Completed</div>
+    <a href="#" class="review-btn" id="reviewBtn"
+      ><i class="fas fa-star"></i> Review Course</a
+    >
+  </div>
+
+  <div class="course-container">
+    <aside class="sidebar">
+      <a href="/student/my-courses" class="back-btn"
+        ><i class="fas fa-arrow-left"></i> Back to Courses</a
+      >
+      <div class="course-title">
+        <i class="fas fa-graduation-cap"></i> {{ course.title }}
+      </div>
+
+      {% for module in course.structure.modules %}
+      {% set m_idx = loop.index0 %}
+      <div class="sidebar-module">
+        <div
+          class="collapsible-header module-header"
+          tabindex="0"
+          data-type="module"
+          data-title="{{ module.title }}"
+          data-desc="{{ module.description|e }}"
+        >
+          <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+          <span class="badge badge-module">Module {{ m_idx + 1 }}</span>
+          <span><i class="fas fa-folder-open"></i> {{ module.title }}</span>
+        </div>
+        <div class="collapsible-content">
+          {% for chapter in module.chapters %}
+          {% set c_idx = loop.index0 %}
+          <div class="sidebar-chapter">
+            <div
+              class="collapsible-header chapter-header"
+              tabindex="0"
+              data-type="chapter"
+              data-title="{{ chapter.title }}"
+              data-desc="{{ chapter.description|e }}"
+            >
+              <span class="arrow"><i class="fas fa-chevron-down"></i></span>
+              <span class="badge badge-chapter"
+                >Ch. {{ m_idx + 1 }}.{{ c_idx + 1 }}</span
+              >
+              <span><i class="fas fa-book"></i> {{ chapter.title }}</span>
+            </div>
+            <div class="collapsible-content topic-list">
+              {% for topic in chapter.topics %}
+              {% set t_idx = loop.index0 %}
+              <div
+                class="topic"
+                data-tid="t{{ m_idx }}-{{ c_idx }}-{{ t_idx }}"
+                data-title="{{ topic.title }}"
+                data-description="{{ topic.description|e }}"
+                data-type="{{ topic.content_type }}"
+                data-url="{{ topic.content_url }}"
+              >
+                <span class="badge badge-topic">{{
+                  m_idx + 1
+                }}.{{ c_idx + 1 }}.{{ t_idx + 1 }}</span>
+                {% if topic.content_type == "video" %}
+                <i class="fas fa-play-circle"></i>
+                {% elif topic.content_type == "pdf" %}
+                <i class="fas fa-file-pdf"></i>
+                {% elif topic.content_type == "image" %}
+                <i class="fas fa-image"></i>
+                {% elif topic.content_type == "link" %}
+                <i class="fas fa-link"></i>
+                {% else %}
+                <i class="fas fa-file"></i>
+                {% endif %}
+                {{ topic.title }}
+                <span class="topic-status"></span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </aside>
+
+    <main class="viewer">
+      <div class="viewer-header">
+        <h2 id="topic-title">Select a Module, Chapter, or Topic</h2>
+        <!-- Mark as Complete only visible for topic -->
+        <button class="complete-btn" id="completeBtn" style="display:none;">
+          <i class="fas fa-check-circle"></i> Mark as Complete
+        </button>
+      </div>
+      <div id="content-area" class="content-area">
+        <p class="placeholder">
+          <i class="fas fa-info-circle"></i> Your selected content or description
+          will appear here.
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <!-- Review Modal (Glassmorphism, Modern UI) -->
+  <div
+    id="reviewModalBackdrop"
+    class="review-modal-backdrop"
+    tabindex="-1"
+    style="display:none;"
+  >
+    <div class="review-modal" role="dialog" aria-modal="true">
+      <button
+        class="close-modal"
+        id="closeReviewModal"
+        aria-label="Close Review"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="modal-header">
+        <img
+  src="{{ user.profile_image or user.photo_url or url_for('static', filename='images/avatar.png') }}"
+  class="review-avatar"
+  alt="{{ user.fullname if user else 'Your profile' }}"
+/>
+
+        <div>
+          <h3 class="modal-title">How was this course?</h3>
+          <div class="review-user">{{ user.fullname if user else "You" }}</div>
+        </div>
+      </div>
+      <form id="reviewForm" method="post" action="{{ url_for('student_course_review', course_id=course._id) }}">
+  <div class="star-rating" id="starRating">
+    {% for star in range(1,6) %}
+      <input type="radio" name="stars" id="star{{ star }}" value="{{ star }}">
+      <label for="star{{ star }}" title="{{ star }} stars">&#9733;</label>
+    {% endfor %}
+  </div>
+  <textarea name="review_text" rows="4" class="modal-textarea" maxlength="500"
+    placeholder="Share your experience (max 500 chars)..." required></textarea>
+  <button class="modal-submit-btn" type="submit">
+    <i class="fas fa-paper-plane"></i> Submit Review
+  </button>
+</form>
+
+    </div>
+  </div>
+
+<script>
+  // ===== THEME SWITCHER =====
+// Function to set theme and update toggle button icon
+function setTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("ascend-theme", theme);
+  const toggleBtn = document.getElementById("themeToggle");
+  if (toggleBtn) {
+    toggleBtn.innerHTML = theme === "dark" ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+  }
+}
+
+// On page load, apply the theme saved by dashboard or default to dark
+window.addEventListener("DOMContentLoaded", () => {
+  let savedTheme = localStorage.getItem("ascend-theme");
+  if (savedTheme !== "light" && savedTheme !== "dark") {
+    savedTheme = "dark"; // fallback default
+  }
+  setTheme(savedTheme);
+});
+
+// Toggle theme on button click and update localStorage
+document.getElementById("themeToggle").addEventListener("click", () => {
+  const currentTheme = document.documentElement.getAttribute("data-theme");
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  setTheme(newTheme);
+});
+
+
+// ===== REVIEW POPUP =====
+const reviewModalBackdrop = document.getElementById("reviewModalBackdrop");
+const reviewModal = reviewModalBackdrop.querySelector(".review-modal");
+document.getElementById("reviewBtn").onclick = function (e) {
+  e.preventDefault();
+
+  reviewModalBackdrop.style.display = "flex";
+
+  // Restart animation for modal popup
+  reviewModal.style.animation = "none";
+  void reviewModal.offsetWidth; // trigger reflow
+  reviewModal.style.animation = null;
+
+  // Reset review form inputs
+  reviewModalBackdrop.querySelectorAll(".star-rating input").forEach((inp) => (inp.checked = false));
+  reviewModalBackdrop.querySelector(".modal-textarea").value = "";
+};
+document.getElementById("closeReviewModal").onclick = function () {
+  reviewModalBackdrop.style.display = "none";
+};
+reviewModalBackdrop.onclick = function (e) {
+  if (e.target === reviewModalBackdrop) reviewModalBackdrop.style.display = "none";
+};
+
+// Star hover effect for rating stars
+document.querySelectorAll(".star-rating label").forEach((label) => {
+  label.addEventListener("mouseenter", function () {
+    this.classList.add("hover");
+    let prev = this.previousElementSibling;
+    while (prev) {
+      prev.classList.add("hover");
+      prev = prev.previousElementSibling;
+    }
+  });
+  label.addEventListener("mouseleave", function () {
+    document.querySelectorAll(".star-rating label").forEach((l) => l.classList.remove("hover"));
+  });
+});
+
+// Review form submission
+document.getElementById("reviewForm").onsubmit = async function (e) {
+  e.preventDefault();
+  const form = this;
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch(form.action, {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+    const result = await response.json();
+
+    if (result.success) {
+      showToast("✅ Review submitted!");
+      reviewModalBackdrop.style.display = "none";
+      form.reset();
+    } else if (result.msg && result.msg.toLowerCase().includes("already reviewed")) {
+      showToast("⚠️ You have already reviewed this course.");
+    } else {
+      showToast("⚠️ " + (result.msg || "Could not submit review."));
+    }
+  } catch {
+    showToast("⚠️ Something went wrong!");
+  }
+};
+
+
+// ===== COLLAPSIBLE SIDEBAR =====
+document.querySelectorAll(".collapsible-header").forEach((header) => {
+  header.addEventListener("click", function () {
+    this.classList.toggle("open");
+    const content = this.nextElementSibling;
+    if (content) {
+      content.style.display = content.style.display === "block" ? "none" : "block";
+    }
+  });
+
+  // Show first collapsible content by default
+  const content = header.nextElementSibling;
+  if (content) content.style.display = "block";
+});
+
+// ===== TOPIC PROGRESS LOGIC =====
+const topics = Array.from(document.querySelectorAll(".topic"));
+const titleEl = document.getElementById("topic-title");
+const contentEl = document.getElementById("content-area");
+const progressBar = document.getElementById("progressBar");
+const progressStatus = document.getElementById("progressStatus");
+const completeBtn = document.getElementById("completeBtn");
+let currentActive = null;
+const STORAGE_KEY = "ascend_course_progress_{{ course._id }}";
+
+function getProgress() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+function saveProgress(progress) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+let progress = getProgress();
+
+// Restore completed topics from storage and mark UI
+topics.forEach((topic) => {
+  if (progress[topic.dataset.tid]) {
+    topic.classList.add("completed");
+    topic.querySelector(".topic-status").innerHTML = '<span class="completed-badge">&#x2714;</span>';
+  }
+});
+
+// Optional placeholder if you want to update sidebar progress visuals
+function updateSidebarProgress() {}
+
+// Calculate and update progress bar and text
+function updateTotalProgress() {
+  const total = topics.length;
+  const done = topics.filter((t) => t.classList.contains("completed")).length;
+  const percent = total ? Math.round((done / total) * 100) : 0;
+  progressBar.style.width = percent + "%";
+  progressStatus.innerText = `${done} / ${total} Topics Completed`;
+
+  if (updateTotalProgress._last === percent) return;
+  updateTotalProgress._last = percent;
+  updateCourseProgressOnServer("{{ course._id }}", percent);
+}
+
+// Send progress update to server via POST
+let lastSentProgress = -1;
+function updateCourseProgressOnServer(courseId, percent) {
+  if (lastSentProgress === percent) return;
+  lastSentProgress = percent;
+  fetch(`/student/update-progress/${courseId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ progress: percent }),
+    credentials: "include",
+  });
+}
+
+// Initialize progress display
+updateSidebarProgress();
+updateTotalProgress();
+
+// Display module/chapter info for non-topic selections
+function showStructureInfo(el) {
+  if (!el.dataset.type) return;
+  const type = el.dataset.type;
+  const title = el.dataset.title;
+  const desc = el.dataset.desc || "";
+  let html = `<h3>${type.charAt(0).toUpperCase() + type.slice(1)}: ${title}</h3>`;
+  html += `<p style="margin-bottom:1rem;">${desc}</p>`;
+  if (type === "module") {
+    const chapters = el.parentElement.querySelectorAll(".chapter");
+    html += "<ul>";
+    chapters.forEach((ch) => {
+      const chHeader = ch.querySelector(".chapter-header");
+      html += `<li><b>${chHeader.dataset.title}</b> <small>${chHeader.dataset.desc}</small>`;
+      const topics = ch.querySelectorAll(".topic");
+      if (topics.length) {
+        html += "<ul>";
+        topics.forEach((t) => {
+          html += `<li><i class="fas fa-check"></i> ${t.dataset.title} - <small>${t.dataset.description}</small></li>`;
+        });
+        html += "</ul>";
+      }
+      html += "</li>";
+    });
+    html += "</ul>";
+    completeBtn.style.display = "none";
+  } else if (type === "chapter") {
+    const topics = el.parentElement.querySelectorAll(".topic");
+    html += "<ul>";
+    topics.forEach((t) => {
+      html += `<li><i class="fas fa-check"></i> ${t.dataset.title} - <small>${t.dataset.description}</small></li>`;
+    });
+    html += "</ul>";
+    completeBtn.style.display = "none";
+  }
+  contentEl.innerHTML = html;
+  titleEl.innerText = type.charAt(0).toUpperCase() + type.slice(1) + ": " + title;
+}
+
+// Topic selection loads content and enables complete button
+topics.forEach((topic) =>
+  topic.addEventListener("click", () => {
+    if (currentActive) currentActive.classList.remove("active");
+    topic.classList.add("active");
+    currentActive = topic;
+
+    // Load topic content in viewer
+    const { title, type, url, description } = topic.dataset;
+    titleEl.textContent = title;
+    let embed = `<p style='margin-bottom: 1rem;'>${description || ""}</p>`;
+    if (type === "video") {
+      embed += `<video controls width="100%" style="border-radius: 12px;max-height:480px;"><source src="${url}" type="video/mp4">Video not supported.</video>`;
+    } else if (type === "pdf") {
+      embed += `<iframe src="https://docs.google.com/gview?url=${url}&embedded=true" width="100%" height="500" style="border-radius: 12px;"></iframe>`;
+    } else if (type === "image") {
+      embed += `<img src="${url}" alt="${title}" style="max-width:100%;border-radius:12px;">`;
+    } else if (type === "link") {
+      embed += `<a href="${url}" target="_blank" class="external-link"><i class="fas fa-link"></i> Open Resource</a>`;
+    } else {
+      embed += `<a href="${url}" target="_blank">Open Resource</a>`;
+    }
+    contentEl.innerHTML = embed;
+
+    // Show complete button only for topics
+    completeBtn.style.display = "flex";
+  })
+);
+
+// Complete button handler marks topic complete and updates progress
+completeBtn.addEventListener("click", () => {
+  if (!currentActive || currentActive.classList.contains("completed")) return;
+  currentActive.classList.add("completed");
+  currentActive.querySelector(".topic-status").innerHTML = '<span class="completed-badge">&#x2714;</span>';
+  progress[currentActive.dataset.tid] = true;
+  saveProgress(progress);
+  showToast("Marked as complete!");
+  updateSidebarProgress();
+  updateTotalProgress();
+});
+
+// Toast notification helper
+function showToast(msg) {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.innerText = msg;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 2100);
+}
+
+// Auto select first incomplete topic on page load
+window.addEventListener("DOMContentLoaded", () => {
+  const firstIncomplete = topics.find((t) => !t.classList.contains("completed")) || topics[0];
+  if (firstIncomplete) firstIncomplete.click();
+});
+
+</script>
+  
+  </body>
+</html>

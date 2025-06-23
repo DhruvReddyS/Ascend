@@ -1,0 +1,136 @@
+{% extends "student/base.html" %}
+
+{% block title %}All Courses{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='stallcourse.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+  <header class="topbar">
+    <h1>All Courses</h1>
+  </header>
+
+  <div class="course-controls">
+    <div class="search-wrapper">
+      <i class="fas fa-search search-icon"></i>
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="Search by title, description, instructor..."
+        aria-label="Search courses"
+      />
+    </div>
+    <div class="sort-wrapper">
+      <label for="sort-select" class="sort-label">
+        <i class="fas fa-sort"></i> Sort:
+      </label>
+      <select id="sort-select" class="sort-select" aria-label="Sort courses">
+        <option value="az">A-Z</option>
+        <option value="za">Z-A</option>
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="rating">Highest Rated</option>
+        <option value="time">Shortest Duration</option>
+      </select>
+    </div>
+  </div>
+
+  <section class="course-section">
+    <div class="course-grid" id="courseGrid">
+      {% for course in courses %}
+      <div class="course-card" 
+           data-title="{{ course.title|lower }}" 
+           data-date="{{ course.created_at }}" 
+           data-rating="{{ course.rating or 0 }}"
+           data-time="{{ course.total_time or 0 }}">
+        <img src="{{ course.thumbnail_url }}" alt="Thumbnail of {{ course.title }}" class="course-thumb" />
+
+        <div class="course-info">
+          <h3 class="course-title">{{ course.title or "No Title" }}</h3>
+          <p class="course-desc">{{ course.description or "No description available." }}</p>
+          <p class="course-instructor">
+            <i class="fas fa-chalkboard-teacher"></i> {{ course.instructor_name or 'Unknown Instructor' }}
+          </p>
+          <div class="course-meta">
+            <span>
+              <i class="fas fa-star"></i> {{ "%.1f"|format(course.rating or 0) }} / 5
+            </span>
+            <span>
+              <i class="fas fa-clock"></i>
+              {{ course.total_time_pretty }} expected
+            </span>
+            <span>
+              <i class="fas fa-layer-group"></i> {{ course.modules_count or 0 }} Modules
+            </span>
+            <span>
+              <i class="fas fa-book-open"></i> {{ course.chapters_count or 0 }} Chapters
+            </span>
+            <span>
+              <i class="fas fa-list"></i> {{ course.topics_count or 0 }} Topics
+            </span>
+          </div>
+          <a href="{{ url_for('student_view_course', course_id=course._id) }}" class="btn view-btn">
+            <i class="fas fa-eye"></i> View Course
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <p class="no-courses">
+        <i class="fas fa-exclamation-triangle"></i> No courses found.
+      </p>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+<script>
+  const searchInput = document.getElementById("search-input");
+  const sortSelect = document.getElementById("sort-select");
+  const courseGrid = document.getElementById("courseGrid");
+
+  function filterCourses() {
+    const query = searchInput.value.toLowerCase();
+    document.querySelectorAll(".course-card").forEach(card => {
+      const title = card.dataset.title;
+      const desc = card.querySelector(".course-desc").textContent.toLowerCase();
+      const instructor = card.querySelector(".course-instructor").textContent.toLowerCase();
+      const matches = title.includes(query) || desc.includes(query) || instructor.includes(query);
+      card.style.display = matches ? "flex" : "none";
+    });
+  }
+
+  function sortCourses() {
+    const cards = Array.from(document.querySelectorAll(".course-card"));
+    const sortBy = sortSelect.value;
+
+    cards.sort((a, b) => {
+      if (sortBy === "az") {
+        return a.dataset.title.localeCompare(b.dataset.title);
+      } else if (sortBy === "za") {
+        return b.dataset.title.localeCompare(a.dataset.title);
+      } else if (sortBy === "newest") {
+        return new Date(b.dataset.date) - new Date(a.dataset.date);
+      } else if (sortBy === "oldest") {
+        return new Date(a.dataset.date) - new Date(b.dataset.date);
+      } else if (sortBy === "rating") {
+        return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
+      } else if (sortBy === "time") {
+        // Sort shortest expected time first
+        return parseInt(a.dataset.time) - parseInt(b.dataset.time);
+      }
+      return 0;
+    });
+
+    cards.forEach(card => courseGrid.appendChild(card));
+  }
+
+  searchInput.addEventListener("input", filterCourses);
+  sortSelect.addEventListener("change", sortCourses);
+  window.addEventListener("load", sortCourses);
+</script>
+{% endblock %}

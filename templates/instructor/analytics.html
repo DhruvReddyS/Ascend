@@ -1,0 +1,159 @@
+{% extends "instructor/base.html" %}
+{% block title %}Instructor Analytics{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='analytics.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="analytics-dashboard">
+  <h2 class="analytics-title"><i class="fas fa-chart-bar"></i> Your Instructor Analytics</h2>
+  <section class="charts">
+    <div class="chart-box">
+      <h3>Average Ratings</h3>
+      <canvas id="ratingChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Course Status</h3>
+      <canvas id="statusBarChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Completions (Last 6 Months)</h3>
+      <canvas id="completionChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Enrollments by Language</h3>
+      <canvas id="languageBarChart"></canvas>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const computedStyle = getComputedStyle(document.documentElement);
+const textColor = computedStyle.getPropertyValue('--text') || "#f1f5f9";
+const gridColor = computedStyle.getPropertyValue('--border') || "#475569";
+
+// Data from Flask
+const ratingLabels = {{ rating_labels|tojson }};
+const ratingData = {{ rating_data|tojson }};
+const statusLabels = {{ status_labels|tojson }};
+const statusData = {{ status_data|tojson }};
+const completionLabels = {{ completion_labels|tojson }};
+const completionData = {{ completion_data|tojson }};
+const languageLabels = {{ language_labels|tojson }};
+const languageData = {{ language_data|tojson }};
+const languageColors = {{ language_colors|tojson }};
+
+// 1. Average Ratings Chart (vertical bar)
+if (ratingLabels.length && ratingData.length) {
+  new Chart(document.getElementById("ratingChart"), {
+    type: "bar",
+    data: {
+      labels: ratingLabels,
+      datasets: [{
+        label: "Average Rating",
+        data: ratingData,
+        backgroundColor: "#3b82f6"
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false, labels: { color: textColor }},
+        tooltip: { mode: 'index' }
+      },
+      scales: {
+        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+        y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }
+      }
+    }
+  });
+}
+
+// 2. Course Status (horizontal stacked bar)
+if (statusLabels.length && statusData.length) {
+  new Chart(document.getElementById("statusBarChart"), {
+    type: "bar",
+    data: {
+      labels: ['Courses'],
+      datasets: [
+        {
+          label: statusLabels[0] || "Published",
+          data: [statusData[0] || 0],
+          backgroundColor: "#10b981"
+        },
+        {
+          label: statusLabels[1] || "Draft",
+          data: [statusData[1] || 0],
+          backgroundColor: "#f87171"
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: {
+        legend: { position: "right", labels: { color: textColor } },
+        tooltip: { mode: 'index' }
+      },
+      scales: {
+        x: { beginAtZero: true, stacked: true, ticks: { color: textColor }, grid: { color: gridColor } },
+        y: { stacked: true, ticks: { color: textColor }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+// 3. Completions (line)
+if (completionLabels.length && completionData.length) {
+  new Chart(document.getElementById("completionChart"), {
+    type: "line",
+    data: {
+      labels: completionLabels,
+      datasets: [{
+        label: "Completions",
+        data: completionData,
+        borderColor: "#10b981",
+        backgroundColor: "rgba(16,185,129,0.18)",
+        fill: true,
+        tension: 0.36
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { position: 'top', labels: { color: textColor } }
+      },
+      scales: {
+        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+        y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }
+      }
+    }
+  });
+}
+
+// 4. Enrollments by Language (vertical bar)
+if (languageLabels.length && languageData.length) {
+  new Chart(document.getElementById("languageBarChart"), {
+    type: "bar",
+    data: {
+      labels: languageLabels,
+      datasets: [{
+        label: "Enrollments",
+        data: languageData,
+        backgroundColor: languageColors
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false, labels: { color: textColor } }
+      },
+      scales: {
+        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+        y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }
+      }
+    }
+  });
+}
+</script>
+{% endblock %}

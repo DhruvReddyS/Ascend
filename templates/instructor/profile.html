@@ -1,0 +1,55 @@
+{% extends "instructor/base.html" %}
+{% block title %}Instructor Profile{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+  <h2><i class="fas fa-id-card"></i> Profile</h2>
+  <div class="profile-header">
+    <div class="profile-pic">
+      <img src="{{ user.profile_image or url_for('static', filename='images/default_profile.png') }}" alt="Profile Picture">
+    </div>
+    <div class="profile-details">
+      <h3>{{ user.fullname }}</h3>
+      <p><i class="fas fa-envelope"></i> {{ user.email }}</p>
+      <p><i class="fas fa-phone"></i> {{ user.mobile }}</p>
+    </div>
+  </div>
+
+  <div class="profile-sections">
+    <div class="card">
+      <h4><i class="fas fa-user-edit"></i> Edit Profile</h4>
+      <form method="POST" action="{{ url_for('update_profile') }}" enctype="multipart/form-data">
+        <label>Full Name</label>
+        <input type="text" name="fullname" value="{{ user.fullname }}" required>
+
+        <label>Mobile</label>
+        <input type="text" name="mobile" value="{{ user.mobile }}" required>
+
+        <label>Profile Image</label>
+        <input type="file" name="profile_image" accept="image/*">
+
+        <button type="submit" class="btn primary">Save Changes</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-chart-line"></i> Account Stats</h4>
+      <ul>
+        <li>Total Courses Created: <strong>{{ user.total_courses or 0 }}</strong></li>
+        <li>Total Students Enrolled: <strong>{{ user.total_students or 0 }}</strong></li>
+        <li>Average Rating: <strong>{{ user.average_rating or 'N/A' }}</strong></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h4><i class="fas fa-clock"></i> Last Activity</h4>
+      <p>{{ user.last_login or 'Not available' }}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

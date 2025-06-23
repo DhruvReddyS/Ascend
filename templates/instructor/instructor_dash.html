@@ -4,75 +4,175 @@
 
 {% block head %}
   <link rel="stylesheet" href="{{ url_for('static', filename='instructor_dash.css') }}">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% endblock %}
 
 {% block content %}
 <div class="header">
   <h1>Welcome back, {{ user.fullname if user else 'Instructor' }}!</h1>
   <div class="header-actions">
-    <div class="profile-picture">
-      <img src="{{ url_for('static', filename='images/student6.jpg') }}" alt="Profile Picture">
+    <a href="{{ url_for('instructor_profile') }}" class="profile-picture">
+      <img src="{{ profile_image_url }}" alt="Profile Picture">
       <span>{{ user.fullname if user else 'John Doe' }}</span>
-    </div>
+    </a>
   </div>
 </div>
 
-<!-- Charts -->
+<!-- Stats Summary -->
+<section class="stats-summary">
+  <div class="stat-box"><h4>Total Courses</h4><p>{{ total_courses }}</p></div>
+  <div class="stat-box"><h4>Published</h4><p>{{ total_published }}</p></div>
+  <div class="stat-box"><h4>Drafts</h4><p>{{ total_drafts }}</p></div>
+  <div class="stat-box"><h4>Total Students</h4><p>{{ total_students }}</p></div>
+  <div class="stat-box"><h4>Total Topics</h4><p>{{ total_topics }}</p></div>
+</section>
+
+<!-- Charts Section -->
 <section class="charts">
   <div class="chart-box">
-    <h3>Student Enrollments</h3>
+    <h3 style="margin-bottom: 10px;">Student Enrollments (Last 6 Months)</h3>
     <canvas id="enrollmentsChart"></canvas>
   </div>
   <div class="chart-box">
-    <h3>Course Completion Rate</h3>
+    <h3 style="margin-bottom: 10px;">Course Completion Rate (%)</h3>
     <canvas id="completionChart"></canvas>
   </div>
 </section>
 
-<!-- My Courses -->
+<!-- Published Courses -->
 <section class="my-courses">
   <div class="section-header">
-    <h2>My Courses</h2>
+    <h2>Published Courses</h2>
     <div class="course-actions">
       <a href="{{ url_for('create_course') }}" class="btn-primary">Create New Course</a>
       <a href="{{ url_for('instructor_my_courses') }}" class="btn-outline-primary">View All Courses</a>
     </div>
   </div>
-
   <div class="course-grid">
-    {% for course in courses %}
+    {% for course in published_courses %}
       <a href="{{ url_for('view_course', course_id=course._id|string) }}" class="course-card">
-        <img src="{{ course.thumbnail_url or url_for('static', filename='images/' ~ course.image) }}" alt="{{ course.title }}" class="course-banner">
+        <img src="{{ course.thumbnail_url or url_for('static', filename='images/default.png') }}" alt="{{ course.title }}" class="course-banner">
         <div class="course-info">
           <h4 class="course-title">{{ course.title }}</h4>
           <p class="course-meta"><i class="fas fa-user-graduate"></i> {{ course.students or 0 }} enrolled</p>
-
           <div class="course-details">
-            <span><i class="fas fa-clock"></i> {{ course.duration or '—' }}</span>
+            <span><i class="fas fa-layer-group"></i> {{ course.num_modules }} Modules</span>
+            <span><i class="fas fa-book"></i> {{ course.num_chapters }} Chapters</span>
+            <span><i class="fas fa-list-ul"></i> {{ course.num_topics }} Topics</span>
             <span><i class="fas fa-signal"></i> {{ course.difficulty | capitalize }}</span>
-            <span><i class="fas fa-layer-group"></i> {{ course.structure | length }} Modules</span>
-            <span><i class="fas fa-book"></i> {{
-              course.structure | map(attribute='chapters') | map('length') | sum
-            }} Chapters</span>
-            <span><i class="fas fa-list-ul"></i> {{
-              course.structure | map(attribute='chapters') | sum(start=[]) | map(attribute='topics') | map('length') | sum
-            }} Topics</span>
           </div>
-
           <div class="course-updated">
             <i class="fas fa-calendar-alt"></i> Updated: {{ course.updated or "Recently" }}
           </div>
         </div>
       </a>
     {% else %}
-      <p>No courses available yet.</p>
+      <p>No published courses available.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Draft Courses -->
+<section class="my-courses">
+  <div class="section-header"><h2>Draft Courses</h2></div>
+  <div class="course-grid">
+    {% for course in draft_courses %}
+      <a href="{{ url_for('view_course', course_id=course._id|string) }}" class="course-card draft">
+        <img src="{{ course.thumbnail_url or url_for('static', filename='images/default.png') }}" alt="{{ course.title }}" class="course-banner">
+        <div class="course-info">
+          <h4 class="course-title">{{ course.title }}</h4>
+          <p class="course-meta"><i class="fas fa-user-graduate"></i> {{ course.students or 0 }} enrolled</p>
+          <div class="course-details">
+            <span><i class="fas fa-layer-group"></i> {{ course.num_modules }} Modules</span>
+            <span><i class="fas fa-book"></i> {{ course.num_chapters }} Chapters</span>
+            <span><i class="fas fa-list-ul"></i> {{ course.num_topics }} Topics</span>
+            <span><i class="fas fa-signal"></i> {{ course.difficulty | capitalize }}</span>
+          </div>
+          <div class="course-updated">
+            <i class="fas fa-calendar-alt"></i> Updated: {{ course.updated or "Recently" }}
+          </div>
+        </div>
+      </a>
+    {% else %}
+      <p>No draft courses available.</p>
     {% endfor %}
   </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="{{ url_for('static', filename='js/instructor_dash.js') }}"></script>
+<script>
+const computedStyle = getComputedStyle(document.documentElement);
+const textColor = computedStyle.getPropertyValue('--text') || "#1f2937";
+const gridColor = computedStyle.getPropertyValue('--border') || "#e5e7eb";
+
+// Enrollments Over Time (Line Chart)
+new Chart(document.getElementById('enrollmentsChart'), {
+  type: 'line',
+  data: {
+    labels: {{ enrollments_chart_labels | tojson }},
+    datasets: [{
+      label: 'Enrollments',
+      data: {{ enrollments_chart_data | tojson }},
+      borderColor: '#3b82f6',
+      backgroundColor: 'rgba(59,130,246,0.13)',
+      tension: 0.38,
+      pointRadius: 5,
+      pointBackgroundColor: '#3b82f6',
+      fill: true,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { mode: 'index' }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Month', color: textColor, font: {weight: 600} },
+        ticks: { color: textColor, font: {weight: 600, size: 13} },
+        grid: { color: gridColor }
+      },
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Enrollments', color: textColor, font: {weight: 600} },
+        ticks: { color: textColor, font: {weight: 600, size: 13} },
+        grid: { color: gridColor }
+      }
+    }
+  }
+});
+
+// Completion Rate (Bar Chart)
+new Chart(document.getElementById('completionChart'), {
+  type: 'bar',
+  data: {
+    labels: {{ completion_chart_labels | tojson }},
+    datasets: [{
+      label: 'Completion Rate (%)',
+      data: {{ completion_chart_data | tojson }},
+      backgroundColor: '#10b981'
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { mode: 'index' }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'Course', color: textColor, font: {weight: 600} },
+        ticks: { color: textColor, font: {weight: 600, size: 13} },
+        grid: { color: gridColor }
+      },
+      y: {
+        beginAtZero: true, max: 100,
+        title: { display: true, text: 'Completion %', color: textColor, font: {weight: 600} },
+        ticks: { color: textColor, font: {weight: 600, size: 13} },
+        grid: { color: gridColor }
+      }
+    }
+  }
+});
+</script>
 {% endblock %}

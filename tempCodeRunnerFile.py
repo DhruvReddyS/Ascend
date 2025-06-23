@@ -16,8 +16,6 @@ app.secret_key = "supersecretkey"  # replace with a secure secret key
 client = MongoClient(os.getenv("MONGO_URI"))
 db = client.get_default_database()
 courses_collection = db["courses"]
-enrollments_collection = db.enrollments
-users_collection = db.users
 
 # Cloudinary config
 cloudinary.config(

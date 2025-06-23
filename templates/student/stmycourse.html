@@ -1,0 +1,157 @@
+{% extends "student/base.html" %}
+
+{% block title %}My Courses{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='stmycourse.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+{% endblock %}
+
+{% block content %}
+<main class="mycourses-wrapper">
+  <div class="topbar-controls">
+    <h1 class="with-bar">My Courses</h1>
+    <div class="search-sort-container">
+      <input type="text" id="search-input" placeholder="Search your courses..." autocomplete="off" />
+      <select id="sort-select">
+        <option value="az">A-Z</option>
+        <option value="za">Z-A</option>
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- In Progress -->
+  <section>
+    <div class="section-heading">In Progress</div>
+    <div class="course-grid" id="progressGrid">
+      {% set inprogress = courses | selectattr("progress", "lt", 100) | list %}
+      {% for course in inprogress %}
+        {% set thumb = course.image_url if course.image_url and '<' not in course.image_url else url_for('static', filename='images/default_course.png') %}
+        <div class="course-card inprogress"
+             data-title="{{ course.title }}"
+             data-date="{{ course.created_at|default('2023-01-01') }}">
+          <div class="card-thumb">
+            <img src="{{ thumb }}" alt="Course Thumbnail"
+                 onerror="this.src='{{ url_for('static', filename='images/default_course.png') }}'">
+            <span class="badge badge-inprogress">In Progress</span>
+          </div>
+          <div class="course-info">
+            <div class="course-title">{{ course.title }}</div>
+            <div class="course-desc">{{ course.description }}</div>
+            <div class="progress-row">
+              <span>Progress</span>
+              <div class="progress-bar">
+                <div class="progress" style="width: {{ course.progress|default(0) }}%"></div>
+              </div>
+              <span>{{ course.progress|default(0) }}%</span>
+            </div>
+            <div class="course-meta">
+              <span><i class="fas fa-user"></i> {{ course.instructor_name or "Unknown" }}</span>
+              {% if course.rating %}
+                <span><i class="fas fa-star"></i> {{ "%.1f"|format(course.rating) }}</span>
+              {% endif %}
+            </div>
+            <a href="{{ url_for('student_course_player', course_id=course._id) }}" class="view-btn">View Course</a>
+          </div>
+        </div>
+      {% else %}
+        <p class="no-courses">No in-progress courses.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Completed -->
+  <section>
+    <div class="section-heading">Completed</div>
+    <div class="course-grid" id="completedGrid">
+      {% set completed = courses | selectattr("progress", "equalto", 100) | list %}
+      {% for course in completed %}
+        {% set thumb = course.image_url if course.image_url and '<' not in course.image_url else url_for('static', filename='images/default_course.png') %}
+        <div class="course-card completed"
+             data-title="{{ course.title }}"
+             data-date="{{ course.created_at|default('2023-01-01') }}">
+          <div class="card-thumb">
+            <img src="{{ thumb }}" alt="Course Thumbnail"
+                 onerror="this.src='{{ url_for('static', filename='images/default_course.png') }}'">
+            <span class="badge badge-complete">Completed</span>
+          </div>
+          <div class="course-info">
+            <div class="course-title">{{ course.title }}</div>
+            <div class="course-desc">{{ course.description }}</div>
+            <div class="progress-row">
+              <span>Progress</span>
+              <div class="progress-bar">
+                <div class="progress" style="width: 100%"></div>
+              </div>
+              <span>100%</span>
+            </div>
+            <div class="course-meta">
+              <span><i class="fas fa-user"></i> {{ course.instructor_name or "Unknown" }}</span>
+              {% if course.rating %}
+                <span><i class="fas fa-star"></i> {{ "%.1f"|format(course.rating) }}</span>
+              {% endif %}
+            </div>
+            <a href="{{ url_for('student_course_player', course_id=course._id) }}" class="view-btn">View Course</a>
+          </div>
+        </div>
+      {% else %}
+        <p class="no-courses">No completed courses.</p>
+      {% endfor %}
+    </div>
+  </section>
+</main>
+
+<script>
+  const searchInput = document.getElementById("search-input");
+  const sortSelect = document.getElementById("sort-select");
+
+  function filterAndSort(section) {
+    const query = searchInput.value.toLowerCase();
+    const cards = Array.from(section.querySelectorAll(".course-card"));
+
+    let visibleCards = cards.filter(card => {
+      const title = card.dataset.title.toLowerCase();
+      const desc = card.querySelector(".course-desc").textContent.toLowerCase();
+      return title.includes(query) || desc.includes(query);
+    });
+
+    cards.forEach(card => card.style.display = "none");
+    visibleCards.forEach(card => card.style.display = "block");
+
+    visibleCards.sort((a, b) => {
+      const titleA = a.dataset.title.toLowerCase();
+      const titleB = b.dataset.title.toLowerCase();
+      const dateA = new Date(a.dataset.date);
+      const dateB = new Date(b.dataset.date);
+      if (sortSelect.value === "az") return titleA.localeCompare(titleB);
+      if (sortSelect.value === "za") return titleB.localeCompare(titleA);
+      if (sortSelect.value === "newest") return dateB - dateA;
+      if (sortSelect.value === "oldest") return dateA - dateB;
+      return 0;
+    });
+
+    visibleCards.forEach(card => section.appendChild(card));
+  }
+
+  const progressGrid = document.getElementById("progressGrid");
+  const completedGrid = document.getElementById("completedGrid");
+
+  searchInput.addEventListener("input", () => {
+    filterAndSort(progressGrid);
+    filterAndSort(completedGrid);
+  });
+
+  sortSelect.addEventListener("change", () => {
+    filterAndSort(progressGrid);
+    filterAndSort(completedGrid);
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    filterAndSort(progressGrid);
+    filterAndSort(completedGrid);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,222 @@
+:root {
+  /* Light Theme Colors */
+  --primary: #3b82f6;
+  --primary-dark: #1e40af;
+  --danger: #ef4444;
+  --danger-dark: #b91c1c;
+  --success: #10b981;
+
+  --bg-light: #f9fafb;
+  --card-bg-light: #fff;
+  --bg-dark: #f3f4f6;
+
+  --text-light: #111827;
+  --text-muted-light: #6b7280;
+
+  --border-light: #d1d5db;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --primary: #60a5fa;
+  --primary-dark: #2563eb;
+  --danger: #ef4444;
+  --danger-dark: #b91c1c;
+  --success: #10b981;
+
+  --bg-light: #1f2937;
+  --card-bg-light: #374151;
+  --bg-dark: #111827;
+
+  --text-light: #f3f4f6;
+  --text-muted-light: #9ca3af;
+
+  --border-light: #4b5563;
+  --shadow-light: rgba(0, 0, 0, 0.7);
+}
+
+/* Container */
+.settings-container {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 2rem 3rem;
+  background-color: var(--card-bg-light);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px var(--shadow-light);
+  color: var(--text-light);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Headings */
+h2 {
+  font-weight: 700;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+/* Tabs container */
+.settings-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--primary);
+}
+
+/* Tab buttons */
+.tab-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background-color: var(--card-bg-light);
+  border: none;
+  border-bottom: 4px solid transparent;
+  color: var(--text-muted-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 8px 8px 0 0;
+}
+
+.tab-button i {
+  font-size: 1.2rem;
+}
+
+.tab-button.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  background-color: var(--bg-dark);
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.tab-button:hover:not(.active) {
+  color: var(--primary);
+}
+
+/* Tab content */
+.tab-content {
+  display: none;
+  background-color: var(--bg-dark);
+  border-radius: 0 0 12px 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: inset 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Section headings */
+h3 {
+  margin-top: 0;
+  font-weight: 700;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+/* Form labels */
+label {
+  display: block;
+  margin: 1rem 0 0.4rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+/* Inputs and selects */
+input[type="password"], select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border-light);
+  background-color: var(--card-bg-light);
+  color: var(--text-light);
+  font-size: 1.1rem;
+  font-weight: 500;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: inset 0 0 6px rgba(255,255,255,0.05);
+}
+
+input[type="password"]:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary);
+}
+
+/* Buttons */
+button {
+  margin-top: 1.4rem;
+  padding: 0.85rem 2.2rem;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.25s ease, box-shadow 0.3s ease;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+  user-select: none;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+button:hover {
+  background-color: var(--primary-dark);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.7);
+}
+
+button:active {
+  box-shadow: 0 4px 10px rgba(30, 64, 175, 0.9);
+  transform: translateY(1px);
+}
+
+/* Primary and danger buttons */
+.btn.primary {
+  background-color: var(--primary);
+}
+
+.btn.danger {
+  background-color: var(--danger);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
+}
+
+.btn.danger:hover {
+  background-color: var(--danger-dark);
+  box-shadow: 0 8px 20px rgba(185, 28, 28, 0.7);
+}
+
+/* Flash messages */
+.flash-messages {
+  margin-bottom: 1rem;
+}
+
+.alert {
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.alert-success {
+  background-color: var(--success);
+  color: #fff;
+}
+
+.alert-error {
+  background-color: var(--danger);
+  color: #fff;
+}

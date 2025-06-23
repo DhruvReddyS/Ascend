@@ -1,0 +1,115 @@
+:root {
+  --primary: #3b82f6;
+  --primary-dark: #1e40af;
+  --danger: #ef4444;
+  --bg-light: #f9fafb;
+  --bg-dark: #181d2f;
+  --card-bg-light: #fff;
+  --card-bg-dark: #222943;
+  --text-light: #f1f5f9;
+  --text-dark: #1f2937;
+  --text-muted-light: #7a7e85;
+  --text-muted-dark: #94a3b8;
+  --border-light: #e5e7eb;
+  --border-dark: #323958;
+  --shadow-light: 0 4px 18px rgba(0,0,0,0.08);
+  --shadow-dark: 0 8px 26px rgba(59,130,246,0.15);
+}
+
+[data-theme="dark"], html[data-theme="dark"] {
+  --bg: var(--bg-dark);
+  --card-bg: var(--card-bg-dark);
+  --text: var(--text-light);
+  --text-muted: var(--text-muted-dark);
+  --border: var(--border-dark);
+  --shadow: var(--shadow-dark);
+}
+[data-theme="light"], html:not([data-theme="dark"]) {
+  --bg: var(--bg-light);
+  --card-bg: var(--card-bg-light);
+  --text: var(--text-dark);
+  --text-muted: var(--text-muted-light);
+  --border: var(--border-light);
+  --shadow: var(--shadow-light);
+}
+
+body, .analytics-dashboard {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+.analytics-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 0.7em;
+  margin-bottom: 1.7em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  letter-spacing: -0.5px;
+}
+.analytics-title i {
+  color: var(--primary);
+  font-size: 1.2em;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(370px, 1fr));
+  gap: 2.1rem;
+  margin-bottom: 1.5rem;
+  margin-right: 1rem;
+}
+
+.chart-box {
+  background: var(--card-bg);
+  border-radius: 1.2em;
+  box-shadow: var(--shadow);
+  border: 1.4px solid var(--border);
+  padding: 1.5rem 1.3rem 1.2rem 1.3rem;
+  min-height: 320px;
+  max-height: 440px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: box-shadow 0.17s, border 0.17s, background 0.19s;
+}
+
+.chart-box:hover {
+  box-shadow: 0 14px 38px rgba(59,130,246,0.09), var(--shadow);
+  border-color: var(--primary);
+}
+
+.chart-box h3 {
+  font-size: 1.24rem;
+  color: var(--text);
+  font-weight: 700;
+  margin-bottom: 0.7em;
+  letter-spacing: -0.2px;
+}
+
+canvas {
+  width: 100% !important;
+  height: 225px !important;
+  margin: 0 auto;
+  display: block;
+  background: transparent;
+}
+
+/* Responsive grid for smaller screens */
+@media (max-width: 1000px) {
+  .charts {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .chart-box {
+    min-height: 220px;
+    padding: 1rem;
+  }
+  .analytics-title {
+    font-size: 1.28rem;
+  }
+}

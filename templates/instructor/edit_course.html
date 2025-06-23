@@ -1,0 +1,369 @@
+{% extends "instructor/base.html" %}
+
+{% block title %}Edit Course{% endblock %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='edit_course.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="edit-course-container">
+  <h2 class="page-heading"><i class="fas fa-edit"></i> Edit Course</h2>
+  <form method="POST" onsubmit="return prepareStructureJson()" enctype="multipart/form-data">
+    <div id="toast-container"></div>
+
+    <!-- Basic Info -->
+    {% for field, label in {
+      'title': 'Title',
+      'description': 'Description',
+      'category': 'Category',
+      'language': 'Language',
+      'difficulty': 'Difficulty',
+      'prerequisites': 'Prerequisites',
+      'learning_objectives': 'Learning Objectives'
+    }.items() %}
+      <div class="course-form-group">
+        <label for="{{ field }}">{{ label }}</label>
+        {% if field in ['description', 'learning_objectives'] %}
+          <textarea id="{{ field }}" name="{{ field }}" required>{{ course[field] }}</textarea>
+        {% else %}
+          <input type="text" id="{{ field }}" name="{{ field }}" value="{{ course[field] }}" {% if field != 'prerequisites' %}required{% endif %}>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <!-- Thumbnail Upload -->
+    <div class="course-form-group">
+      <label for="thumbnail">Course Thumbnail</label>
+      <input type="file" id="thumbnail" name="thumbnail" accept="image/*" onchange="previewThumbnail(event)">
+      <div id="thumbnail-preview">
+        {% if course.thumbnail_url %}
+        <img src="{{ course.thumbnail_url }}" id="current-thumbnail" alt="Thumbnail" style="max-width: 200px;">
+        <button type="button" onclick="removeThumbnail()">Remove</button>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Structure -->
+    <input type="hidden" name="structure_json" id="structure_json">
+    <div id="modules-container"></div>
+
+    <button type="button" onclick="addModule()" class="btn-add-module"><i class="fas fa-plus"></i> Add Module</button>
+    <button type="submit"><i class="fas fa-save"></i> Save Course</button>
+  </form>
+</div>
+
+ <!-- Structure Injection -->
+  <script>
+    window.courseStructure = {{ course.structure | tojson | safe }};
+  </script>
+  <script>
+    // JS for edit_course.js
+
+function showToast(msg) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `<i class='fas fa-exclamation-triangle'></i> ${msg}`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 4000);
+}
+
+function removeElement(el) {
+  if (confirm('Are you sure you want to delete this section?')) {
+    el.remove();
+    updateStructureNumbering();
+  }
+}
+
+function previewThumbnail(event) {
+  const preview = document.getElementById('thumbnail-preview');
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      preview.innerHTML = `<img src='${e.target.result}' style='max-width: 200px;'><button type='button' onclick='removeThumbnail()'>Remove</button>`;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function removeThumbnail() {
+  document.getElementById('thumbnail').value = '';
+  document.getElementById('thumbnail-preview').innerHTML = '';
+}
+
+function addModule() {
+  const container = document.getElementById('modules-container');
+  const module = document.createElement('div');
+  module.className = 'course-module';
+  module.innerHTML = `
+    <details open>
+      <summary class='course-module-header'>
+        <span><i class='fas fa-cube'></i> Module</span>
+        <button type='button' onclick='removeElement(this.closest(".course-module"))' class='btn-delete'>
+          <i class='fas fa-trash'></i> Delete
+        </button>
+      </summary>
+      <input type='text' class='module-title' placeholder='Module Title' required>
+      <textarea class='module-desc' placeholder='Module Description' required></textarea>
+      <div class='course-chapters'></div>
+      <button type='button' onclick='addChapter(this)' class='btn-add-chapter'><i class='fas fa-plus'></i> Add Chapter</button>
+    </details>`;
+  container.appendChild(module);
+  updateStructureNumbering();
+}
+
+function addChapter(btn) {
+  const chaptersDiv = btn.previousElementSibling;
+  const chapter = document.createElement('div');
+  chapter.className = 'course-chapter';
+  chapter.innerHTML = `
+    <details open>
+      <summary class='course-chapter-header'>
+        <span><i class='fas fa-book'></i> Chapter</span>
+        <button type='button' onclick='removeElement(this.closest(".course-chapter"))' class='btn-delete'>
+          <i class='fas fa-trash'></i> Delete
+        </button>
+      </summary>
+      <input type='text' class='chapter-title' placeholder='Chapter Title' required>
+      <textarea class='chapter-desc' placeholder='Chapter Description' required></textarea>
+      <div class='course-topics'></div>
+      <button type='button' onclick='addTopic(this)' class='btn-add-topic'><i class='fas fa-plus'></i> Add Topic</button>
+    </details>`;
+  chaptersDiv.appendChild(chapter);
+  updateStructureNumbering();
+}
+
+function addTopic(btn) {
+  const topicsDiv = btn.previousElementSibling;
+  const topic = document.createElement('div');
+  const uniqueId = `topic_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+  topic.className = 'course-topic';
+  topic.setAttribute('data-topic-id', uniqueId);
+  topic.innerHTML = `
+    <div class='topic-number'></div>
+    <input type='text' class='topic-title' placeholder='Topic Title' required>
+    <input type='text' class='topic-desc' placeholder='Topic Description'>
+    <input type='number' class='topic-time' placeholder='Duration (mins)' required>
+
+    <select class='topic-type' onchange='handleTypeChange(this)' required>
+      <option value=''>-- Select Content Type --</option>
+      <option value='pdf'>PDF</option>
+      <option value='image'>Image</option>
+      <option value='video'>Video</option>
+      <option value='link'>Link</option>
+      <option value='other'>Other</option>
+    </select>
+
+    <input type='text' class='topic-other-type' placeholder='Specify type' style='display:none;'>
+    <input type='url' class='topic-url' placeholder='External Link URL' style='display:none;'>
+    <input type='file' class='topic-file' name='topic_file_${uniqueId}' style='display:none;'>
+
+    <a href='#' onclick='event.preventDefault(); previewDynamicFile(this.closest(".course-topic"))'><i class='fas fa-eye'></i> Preview</a>
+    <button type='button' onclick='removeElement(this.closest(".course-topic"))' class='btn-delete'><i class='fas fa-trash'></i> Delete</button>
+  `;
+  topicsDiv.appendChild(topic);
+  updateStructureNumbering();
+}
+
+function handleTypeChange(select) {
+  const topic = select.closest('.course-topic');
+  topic.querySelector('.topic-other-type').style.display = 'none';
+  topic.querySelector('.topic-url').style.display = 'none';
+  topic.querySelector('.topic-file').style.display = 'none';
+
+  if (select.value === 'link') {
+    topic.querySelector('.topic-url').style.display = 'block';
+  } else if (select.value === 'other') {
+    topic.querySelector('.topic-other-type').style.display = 'block';
+    topic.querySelector('.topic-file').style.display = 'block';
+  } else {
+    topic.querySelector('.topic-file').style.display = 'block';
+  }
+}
+
+function previewDynamicFile(topic) {
+  const urlField = topic.querySelector('.topic-url');
+  const fileInput = topic.querySelector('.topic-file');
+  const type = topic.querySelector('.topic-type')?.value;
+  const uploadedFile = fileInput?.files?.[0];
+  const existingUrl = fileInput?.dataset?.existing;
+
+  let previewUrl = '';
+
+  // 1. Link-based content
+  if (type === 'link') {
+    const link = urlField?.value?.trim();
+    if (link) {
+      const ext = link.split('.').pop().toLowerCase();
+      previewUrl = ext === 'pdf'
+        ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(link)}`
+        : link;
+      return window.open(previewUrl, '_blank');
+    }
+  }
+
+  // 2. Newly uploaded file (preview locally)
+  if (uploadedFile) {
+    const blobUrl = URL.createObjectURL(uploadedFile);
+    if (uploadedFile.type.startsWith('image/')) {
+      const win = window.open('');
+      win.document.write(`<img src="${blobUrl}" style="max-width: 100%">`);
+    } else if (uploadedFile.type.startsWith('video/')) {
+      const win = window.open('');
+      win.document.write(`<video controls autoplay style="max-width: 100%"><source src="${blobUrl}" type="${uploadedFile.type}"></video>`);
+    } else if (uploadedFile.type === 'application/pdf') {
+      window.open(blobUrl, '_blank');
+    } else {
+      showToast('Unsupported file type.');
+    }
+    return;
+  }
+
+  // 3. Existing uploaded URL from DB
+  if (existingUrl) {
+    const ext = existingUrl.split('.').pop().toLowerCase();
+    previewUrl = ext === 'pdf'
+      ? `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(existingUrl)}`
+      : existingUrl;
+
+    return window.open(previewUrl, '_blank');
+  }
+
+  showToast('No preview available.');
+}
+
+
+
+function updateStructureNumbering() {
+  const modules = document.querySelectorAll('.course-module');
+  modules.forEach((mod, mIdx) => {
+    const moduleNumber = mIdx + 1;
+    mod.querySelector('summary span').innerHTML = `<i class='fas fa-cube'></i> ${moduleNumber}. Module`;
+    const chapters = mod.querySelectorAll('.course-chapter');
+    chapters.forEach((chap, cIdx) => {
+      const chapterNumber = `${moduleNumber}.${cIdx + 1}`;
+      chap.querySelector('summary span').innerHTML = `<i class='fas fa-book'></i> ${chapterNumber} Chapter`;
+      const topics = chap.querySelectorAll('.course-topic');
+      topics.forEach((topic, tIdx) => {
+        topic.querySelector('.topic-number').innerText = `${chapterNumber}.${tIdx + 1} Topic`;
+      });
+    });
+  });
+}
+
+function prepareStructureJson() {
+  const requiredFields = document.querySelectorAll('input[required], textarea[required], select[required]');
+  for (let field of requiredFields) {
+    if (!field.value.trim()) {
+      field.focus();
+      showToast('Please fill all required fields.');
+      return false;
+    }
+  }
+
+  const modules = document.querySelectorAll('.course-module');
+  if (modules.length === 0) return showToast('At least one module required.'), false;
+
+  for (let m of modules) {
+    const chapters = m.querySelectorAll('.course-chapter');
+    if (chapters.length === 0) return showToast('Each module must have at least one chapter.'), false;
+    for (let c of chapters) {
+      const topics = c.querySelectorAll('.course-topic');
+      if (topics.length === 0) return showToast('Each chapter must have at least one topic.'), false;
+    }
+  }
+
+  const modulesData = [];
+  modules.forEach(mod => {
+    const chaptersData = [];
+    mod.querySelectorAll('.course-chapter').forEach(chap => {
+      const topicsData = [];
+      chap.querySelectorAll('.course-topic').forEach(top => {
+        const topicId = top.getAttribute('data-topic-id');
+        let type = top.querySelector('.topic-type').value.trim();
+        if (type === 'other') {
+          type = top.querySelector('.topic-other-type').value.trim() || 'other';
+        }
+        const urlField = top.querySelector('.topic-url');
+        const fileField = top.querySelector('.topic-file');
+
+        const content_url = type === 'link'
+          ? urlField.value.trim()
+          : fileField && fileField.files[0]
+            ? fileField.files[0].name
+            : fileField.getAttribute('data-existing') || '';
+
+        topicsData.push({
+          topic_id: topicId,
+          title: top.querySelector('.topic-title').value.trim(),
+          description: top.querySelector('.topic-desc').value.trim(),
+          content_type: type,
+          estimated_time: top.querySelector('.topic-time').value.trim(),
+          content_url: content_url
+        });
+      });
+      chaptersData.push({
+        title: chap.querySelector('.chapter-title').value.trim(),
+        description: chap.querySelector('.chapter-desc').value.trim(),
+        topics: topicsData
+      });
+    });
+    modulesData.push({
+      title: mod.querySelector('.module-title').value.trim(),
+      description: mod.querySelector('.module-desc').value.trim(),
+      chapters: chaptersData
+    });
+  });
+
+  document.getElementById('structure_json').value = JSON.stringify({ modules: modulesData });
+  return true;
+}
+
+function loadCourseStructure(structure) {
+  if (!structure || !structure.modules) return;
+  for (const module of structure.modules) {
+    addModule();
+    const moduleEl = document.querySelectorAll('.course-module:last-child')[0];
+    moduleEl.querySelector('.module-title').value = module.title;
+    moduleEl.querySelector('.module-desc').value = module.description;
+    const chaptersDiv = moduleEl.querySelector('.course-chapters');
+    for (const chapter of module.chapters) {
+      addChapter(moduleEl.querySelector('.btn-add-chapter'));
+      const chapterEl = moduleEl.querySelectorAll('.course-chapter:last-child')[0];
+      chapterEl.querySelector('.chapter-title').value = chapter.title;
+      chapterEl.querySelector('.chapter-desc').value = chapter.description;
+      const topicsDiv = chapterEl.querySelector('.course-topics');
+      for (const topic of chapter.topics) {
+        addTopic(chapterEl.querySelector('.btn-add-topic'));
+        const topicEl = chapterEl.querySelectorAll('.course-topic:last-child')[0];
+        const topicId = topic.topic_id;
+        topicEl.setAttribute('data-topic-id', topicId);
+        topicEl.querySelector('.topic-title').value = topic.title;
+        topicEl.querySelector('.topic-desc').value = topic.description;
+        topicEl.querySelector('.topic-type').value = topic.content_type;
+        handleTypeChange(topicEl.querySelector('.topic-type'));
+        topicEl.querySelector('.topic-time').value = topic.estimated_time;
+        if (topic.content_type === 'link') {
+          topicEl.querySelector('.topic-url').value = topic.content_url;
+        } else {
+          topicEl.querySelector('.topic-file').setAttribute('data-existing', topic.content_url);
+        }
+      }
+    }
+  }
+  updateStructureNumbering();
+}
+
+window.onload = () => {
+  const structure = window.courseStructure || {};
+  loadCourseStructure(structure);
+};
+
+  </script>
+  {% endblock %}
+</body>
+</html>
