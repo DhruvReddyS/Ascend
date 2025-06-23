@@ -151,4 +151,4 @@ from controllers.student import *
 # Start server
 if __name__ == "__main__":
     create_admin_if_not_exists()
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=8000)
