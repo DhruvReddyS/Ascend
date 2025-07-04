@@ -347,3 +347,51 @@ img {
     gap: 0.5rem;
   }
 }
+
+.badge-completed {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: #3b82f6;               /* Your theme's primary blue */
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 0.08rem 0.7rem 0.08rem 0.46rem;
+  display: flex;
+  align-items: center;
+  gap: 0.21em;
+  min-height: 22px;
+  min-width: 62px;
+  box-shadow: 0 1px 6px #3b82f615;
+  letter-spacing: 0.01em;
+  z-index: 2;
+  border: none;
+  transition: box-shadow 0.14s, transform 0.13s;
+}
+
+.badge-completed i {
+  color: #fff;
+  margin-right: 0.17em;
+  font-size: 1em;
+  vertical-align: middle;
+}
+
+.badge-completed:hover {
+  box-shadow: 0 2px 12px #3b82f655;
+  transform: scale(1.05);
+}
+
+/* Optional: Dark mode (keeps it blue, but you can change shade) */
+[data-theme="dark"] .badge-completed {
+  background: #2563eb;
+}
+
+.course-card {
+  position: relative; /* Needed for absolute badge */
+}
+
+.badge-completed:hover {
+  transform: scale(1.07) rotate(-2deg);
+  box-shadow: 0 6px 22px 4px rgba(255, 214, 60, 0.20);
+}

@@ -21,7 +21,15 @@ def instructor_dashboard():
     total_courses = len(courses)
     total_published = len(published_courses)
     total_drafts = len(draft_courses)
-    total_students = sum(c.get("students", 0) for c in published_courses)
+
+    total_students = 0
+
+    for course in published_courses:
+        course_id = course["_id"]
+        # Count users whose enrolled_courses contains this course_id
+        student_count = db.users.count_documents({"enrolled_courses": course_id})
+        total_students += student_count
+
 
     # Parse and stats
     def compute_course_stats(course):

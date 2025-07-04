@@ -745,23 +745,23 @@ function saveDraft() {
 
 
 function validateForm() {
-  console.log("🧪 Running validateForm...");
+  console.log("Running validateForm...");
 
   const isValidTab0 = validateTab(0);
   const isValidTab1 = validateTab1Fields();
 
   if (!isValidTab0 || !isValidTab1) {
-    showToast("❌ Fix all errors before submitting the course.");
-    console.log("❌ Validation failed. Submission blocked.");
+    showToast("Fix all errors before submitting the course.");
+    console.log("Validation failed. Submission blocked.");
     return false;
   }
 
-  // Generate and store structure JSON in hidden field
+  
   const structureObj = generateStructureJSON();
-  console.log("✅ Structure JSON Generated:", structureObj);
+  console.log("Structure JSON Generated:", structureObj);
 
-  // All good — allow form submission
-  console.log("✅ Form validated successfully. Submitting...");
+
+  console.log("Form validated successfully. Submitting...");
   return true;
 }
 
@@ -819,5 +819,5 @@ function generateStructureJSON() {
   });
 
   document.getElementById('structure_json').value = JSON.stringify({ modules: structure });
-  return { modules: structure }; // Optional: for live console/debug
+  return { modules: structure };
 }
