@@ -5,7 +5,7 @@ import cloudinary.uploader
 import json
 from app import app, db, courses_collection
 from bson import ObjectId, errors as bson_errors
-# ========== Instructor Dashboard ==========
+# ========== Instructor Dashboard ===========
 @app.route('/instructor/dashboard')
 def instructor_dashboard():
     if session.get("role") != "instructor":
